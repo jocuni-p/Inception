@@ -1,0 +1,4 @@
+# include all files that have private info (i.e. passwords, ...)
+db_password.txt
+db_root_password.txt
+credentials.txt
