@@ -1,0 +1,28 @@
+# Sensitive files
+.env
+*.env
+secrets/
+**/secrets*
+
+# WordPress cache or temp files
+wp-content/cache/
+wp-content/debug.log
+
+# Temporary files
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+*.DS_Store
+
+# Development artifacts
+*.md
+*.txt
+README*
+LICENSE*
+
+# Version control
+.git
+.gitignore
+

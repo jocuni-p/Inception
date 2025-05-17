@@ -11,24 +11,26 @@
 #
 # =====================================================================
 #
+# Variables
 PROJECT = inception
 DOMAIN = jocuni-p.42.fr
-MYDATA_DIR = /home/jocuni-p/mydata
+MYDATA_DIR = /Users/joan/mydata # MacOS
+# MYDATA_DIR = /home/jocuni-p/mydata # MVDebian
 DB_DIR = $(MYDATA_DIR)/db_vol
 WP_DIR = $(MYDATA_DIR)/wp_vol
 COMPOSE = docker-compose -f srcs/docker-compose.yml -p $(PROJECT)
 
-# Default target
+# Rules
 all: build
 
 setup:
 	@echo "[SETUP] Creating volume directories in $(MYDATA_DIR)"
 	@mkdir -p $(DB_DIR) $(WP_DIR)
-	#@echo "[SETUP] Ensuring $(DOMAIN) is in /etc/hosts"
-	#@grep -q "$(DOMAIN)" /etc/hosts || echo "127.0.0.1 $(DOMAIN)" | sudo tee -a /etc/hosts > /dev/null
-	#Busca si el dominio "jocuni-p.42.fr" esta presente en hosts. La -q es modo silencioso.
-	#Si no lo esta, lo escribe y lo anyade a hosts con sudo (para tener permiso) tee.
-	#Con > /dev/null suprimo la salida de tee, evitando impresion en consola
+#	@echo "[SETUP] Ensuring $(DOMAIN) is in /etc/hosts"
+#	@grep -q "$(DOMAIN)" /etc/hosts || echo "127.0.0.1 $(DOMAIN)" | sudo tee -a /etc/hosts > /dev/null
+#	Busca si el dominio "jocuni-p.42.fr" esta presente en hosts. La -q es modo silencioso.
+#	Si no lo esta, lo escribe y lo anyade a hosts con sudo (para tener permiso) tee.
+#	Con > /dev/null suprimo la salida de tee, evitando impresion en consola
 
 build: setup
 	@echo "[BUILD] Building Docker images and starting containers"
@@ -52,8 +54,8 @@ clean: down
 	@echo "[CLEAN] Removing project volumes and network"
 	@docker volume rm $(PROJECT)_db_vol $(PROJECT)_wp_vol 2>/dev/null || true
 	@docker network rm $(PROJECT)_inception 2>/dev/null || true
-	#Con 2>/dev/null elimino cualquier mensaje de error.
-	#Si no existen los volumenes, hay '|| true' para que no se pare el Makefile 
+#	Con 2>/dev/null elimino cualquier mensaje de error.
+#	Si no existen los volumenes, hay '|| true' para que no se pare el Makefile 
 
 fclean: clean
 	@echo "[FCLEAN] Removing project images"
