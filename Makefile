@@ -1,6 +1,4 @@
 # Project configuration
-
-#test
 #
 ## =====================================================================
 # NOTE:
@@ -16,11 +14,11 @@
 # Variables
 PROJECT = inception
 DOMAIN = jocuni-p.42.fr
-MYDATA_DIR = /Users/joan/mydata # MacOS
-# MYDATA_DIR = /home/jocuni-p/mydata # MVDebian
+
+MYDATA_DIR = /home/jocuni-p/mydata
 DB_DIR = $(MYDATA_DIR)/db_vol
 WP_DIR = $(MYDATA_DIR)/wp_vol
-COMPOSE = docker-compose -f srcs/docker-compose.yml -p $(PROJECT)
+COMPOSE = docker compose -f srcs/docker-compose.yml -p $(PROJECT)
 
 # Rules
 all: build
@@ -28,8 +26,8 @@ all: build
 setup:
 	@echo "[SETUP] Creating volume directories in $(MYDATA_DIR)"
 	@mkdir -p $(DB_DIR) $(WP_DIR)
-#	@echo "[SETUP] Ensuring $(DOMAIN) is in /etc/hosts"
-#	@grep -q "$(DOMAIN)" /etc/hosts || echo "127.0.0.1 $(DOMAIN)" | sudo tee -a /etc/hosts > /dev/null
+	@echo "[SETUP] Ensuring $(DOMAIN) is in /etc/hosts"
+	@grep -q "$(DOMAIN)" /etc/hosts # || echo "127.0.0.1 $(DOMAIN)" | sudo tee -a /etc/hosts > /dev/null
 #	Busca si el dominio "jocuni-p.42.fr" esta presente en hosts. La -q es modo silencioso.
 #	Si no lo esta, lo escribe y lo anyade a hosts con sudo (para tener permiso) tee.
 #	Con > /dev/null suprimo la salida de tee, evitando impresion en consola
@@ -37,6 +35,13 @@ setup:
 build: setup
 	@echo "[BUILD] Building Docker images and starting containers"
 	@$(COMPOSE) up -d --build #Con up arranco los servicios del docker-compose.yml
+
+printvars:
+	@echo "MYDATA_DIR=$(MYDATA_DIR)"
+	@echo "DB_DIR=$(DB_DIR)"
+	@echo "WP_DIR=$(WP_DIR)"
+
+
 
 stop:
 	@echo "[STOP] Stopping containers"

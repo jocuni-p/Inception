@@ -47,20 +47,20 @@ services:
 #    depends_on:
 #      - mariadb
 
-#volumes:
-  db_vol:
-    driver: local
-    driver_opts:
-      type: none # No se define un sitema de archivos especifico
-      device: '/home/jocuni-p/mydata/db_vol' # directorio del host donde se va a montar
-      o: bind # Mapea una carpeta del host a dentro del contenedor.
+volumes:
+  db_vol: {}
+  #    driver: local
+  #    driver_opts:
+  #      type: none # No se define un sitema de archivos especifico
+  #      device: '/home/jocuni-p/mydata/db_vol' # directorio del host donde se va a montar
+  #      o: bind # Mapea una carpeta del host a dentro del contenedor.
 
-  wp_vol:
-    driver: local
-    driver_opts:
-      type: none
-      device: '/home/jocuni-p/mydata/wp_vol'
-      o: bind
+  wp_vol: {}
+    #    driver: local
+    #    driver_opts:
+    #      type: none
+    #      device: '/home/jocuni-p/mydata/wp_vol'
+    #      o: bind
 
 #networks:
   inception:
