@@ -1,4 +1,4 @@
-version: '3.7'
+# version: '3.7' # Comentado por obsoleto.
   
   # This docker-compose manage 3 different containers/services (nginx, mariadb and wordpress)
 services:
@@ -16,9 +16,9 @@ services:
  #   networks:
  #     - inception
   nginx:
-    image: nginx
+    image: nginx # Aseguro que el nombre de la imagen sera este.
     container_name: nginx
-    build: ./requirements/nginx
+    build: ./requirements/nginx #Busca el Dockerfile y construye la imagen
     env_file: .env
     restart: on-failure
     ports:
@@ -26,10 +26,10 @@ services:
     volumes:
       - wp_vol:/var/www/html
       - ./requirements/nginx/conf:/etc/nginx/conf.d
-    networks:
-      - inception
-    depends_on:
-      - wordpress
+        #    networks:
+        #      - inception
+#    depends_on:
+#      - wordpress
 
 # COMENTADO DE MOMENTO
 #  wordpress:
@@ -63,6 +63,6 @@ volumes:
     #      o: bind
 
 #networks:
-  inception:
-    driver: bridge
+#  inception:
+#    driver: bridge
 
