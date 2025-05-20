@@ -1,19 +1,19 @@
 # debian OS penultimate stable version
 FROM debian:bullseye
 
-#INSTALACION DE PAQUETES
-#OJO php-fpm POTSER NO CAL INSTALAR-LO
+# INSTALACION DE PAQUETES
+# OJO php-fpm POTSER NO CAL INSTALAR-LO
 # update and upgrade apt, install NGINX, Vim, Curl & OpenSSL(creacion/gestion de certificados)
 RUN apt-get update && apt-get upgrade -y && apt-get install -y nginx vim curl openssl php-fpm
 
-#GENERACION DEL CERTIFICADO
+# GENERACION DEL CERTIFICADO
 RUN	mkdir -p /etc/nginx/ssl && openssl req -x509 -nodes \
 	-out /etc/nginx/ssl/nginx.crt \
 	-keyout /etc/nginx/ssl/nginx.key \
 	-subj "/C=ES/ST=Barcelona/L=Barcelona/O=42/OU=42/CN=jocuni-p.42.fr/UID=jocuni-p" && \
 	mkdir -p /var/run/nginx
-#Crea el directorio /etc/nginx/ssl para guardar los certificados.
-#Genera un certificado autofirmado:
+# Crea el directorio /etc/nginx/ssl para guardar los certificados.
+# Genera un certificado autofirmado:
 #	-x509: formato del certificado.
 #	-nodes: no se pide contraseña para la clave privada.
 #	-subj: define los datos del certificado.
@@ -31,7 +31,7 @@ RUN mkdir -p /var/www/html
 RUN chown -R www-data:www-data /var/www/html && \
     chmod -R 755 /var/www/html
 
-#Expone el puerto HTTPS para que el contenedor escuche trafico seguro.
+# Expone el puerto HTTPS para que el contenedor escuche trafico seguro.
 EXPOSE 443
 
 # Default command when the container starts

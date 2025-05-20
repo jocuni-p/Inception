@@ -1,20 +1,20 @@
 # version: '3.7' # Comentado por obsoleto.
   
-  # This docker-compose manage 3 different containers/services (nginx, mariadb and wordpress)
+# This docker-compose manage 3 different containers/services (nginx, mariadb and wordpress)
 services:
-# COMENTADO DE MOMENTO
-#  mariadb:
- #   image: mariadb  # Fuerzo el nombre de la imagen para cumplir subject
-  #  container_name: mariadb
-   # build: ./requirements/mariadb
-    #env_file: .env
-#    restart: unless-stopped
-#    expose: 
- #     - "3306"
- #   volumes:
-  #    - db_vol:/var/lib/mysql
- #   networks:
- #     - inception
+  mariadb:
+    image: mariadb  # Fuerzo el nombre de la imagen para cumplir subject
+    container_name: mariadb
+    build: ./requirements/mariadb
+    env_file: .env
+    restart: unless-stopped
+    expose: 
+      - "3306"
+    volumes:
+      - db_vol:/var/lib/mysql
+    networks:
+      - inception
+
   nginx:
     image: nginx # Aseguro que el nombre de la imagen sera este.
     container_name: nginx
@@ -26,43 +26,42 @@ services:
     volumes:
       - wp_vol:/var/www/html
       - ./requirements/nginx/conf:/etc/nginx/conf.d
-        #    networks:
-        #      - inception
-#    depends_on:
-#      - wordpress
+    networks:
+      - inception
+    depends_on:
+      - wordpress
 
-# COMENTADO DE MOMENTO
-#  wordpress:
-#    image: wordpress
-#    container_name: wordpress
-#    build: ./requirements/wordpress
-#    env_file: .env
-#    restart: on-failure
-#    expose:
-#      - "9000"
-#    volumes:
-#      - wp_vol:/var/www/html
-#    networks:
-#      - inception
-#    depends_on:
-#      - mariadb
+  wordpress:
+    image: wordpress
+    container_name: wordpress
+    build: ./requirements/wordpress
+    env_file: .env
+    restart: on-failure
+    expose:
+      - "9000"
+    volumes:
+      - wp_vol:/var/www/html
+    networks:
+      - inception
+    depends_on:
+      - mariadb
 
 volumes:
-  db_vol: {}
-  #    driver: local
-  #    driver_opts:
-  #      type: none # No se define un sitema de archivos especifico
-  #      device: '/home/jocuni-p/mydata/db_vol' # directorio del host donde se va a montar
-  #      o: bind # Mapea una carpeta del host a dentro del contenedor.
+  db_vol:
+    driver: local
+    driver_opts:
+      type: none # No se define un sitema de archivos especifico
+      device: '/home/jocuni-p/mydata/db_vol' # directorio del host donde se va a montar
+      o: bind # Mapea una carpeta del host a dentro del contenedor.
 
-  wp_vol: {}
-    #    driver: local
-    #    driver_opts:
-    #      type: none
-    #      device: '/home/jocuni-p/mydata/wp_vol'
-    #      o: bind
+  wp_vol:
+    driver: local
+    driver_opts:
+      type: none
+      device: '/home/jocuni-p/mydata/wp_vol'
+      o: bind
 
-#networks:
-#  inception:
-#    driver: bridge
+networks:
+  inception:
+    driver: bridge
 

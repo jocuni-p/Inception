@@ -34,7 +34,7 @@ setup:
 
 build: setup
 	@echo "[BUILD] Building Docker images and starting containers"
-	@$(COMPOSE) up -d --build #Con up arranco los servicios del docker-compose.yml
+	@$(COMPOSE) up -d --build # Con up arranco los servicios del docker-compose.yml
 
 printvars:
 	@echo "MYDATA_DIR=$(MYDATA_DIR)"
@@ -54,14 +54,14 @@ start:
 down:
 	@echo "[DOWN] Removing containers"
 	@$(COMPOSE) down
-	#Detiene la aplicacion y elimina containers, networks, creados por docker-compose up.
-	#Forma limpia de cerrar y salir. Sin ninguna option No elimina imagenes ni volumenes.
+# 	Detiene la aplicacion y elimina containers, networks, creados por docker-compose up.
+# 	Forma limpia de cerrar y salir. Sin ninguna option No elimina imagenes ni volumenes.
 
 clean: down
 	@echo "[CLEAN] Removing project volumes and network"
 	@docker volume rm $(PROJECT)_db_vol $(PROJECT)_wp_vol 2>/dev/null || true
 	@docker network rm $(PROJECT)_inception 2>/dev/null || true
-#	Con 2>/dev/null elimino cualquier mensaje de error.
+#	Con 2>/dev/null redirijo alli cualquier salida de mensaje de error.
 #	Si no existen los volumenes, hay '|| true' para que no se pare el Makefile 
 
 fclean: clean
