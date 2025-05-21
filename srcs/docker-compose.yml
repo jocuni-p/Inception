@@ -1,9 +1,6 @@
-# version: '3.7' # Comentado por obsoleto.
-  
-# This docker-compose manage 3 different containers/services (nginx, mariadb and wordpress)
 services:
   mariadb:
-    image: mariadb  # Fuerzo el nombre de la imagen para cumplir subject
+    image: mariadb
     container_name: mariadb
     build: ./requirements/mariadb
     env_file: .env
@@ -16,9 +13,9 @@ services:
       - inception
 
   nginx:
-    image: nginx # Aseguro que el nombre de la imagen sera este.
+    image: nginx
     container_name: nginx
-    build: ./requirements/nginx #Busca el Dockerfile y construye la imagen
+    build: ./requirements/nginx
     env_file: .env
     restart: on-failure
     ports:
@@ -51,14 +48,14 @@ volumes:
     driver: local
     driver_opts:
       type: none # No se define un sitema de archivos especifico
-      device: '/home/jocuni-p/mydata/db_vol' # directorio del host donde se va a montar
+      device: "/home/${USER}/mydata/db_vol" # directorio del host donde se va a montar
       o: bind # Mapea una carpeta del host a dentro del contenedor.
 
   wp_vol:
     driver: local
     driver_opts:
       type: none
-      device: '/home/jocuni-p/mydata/wp_vol'
+      device: "/home/${USER}/mydata/wp_vol"
       o: bind
 
 networks:
