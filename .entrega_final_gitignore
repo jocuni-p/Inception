@@ -1,0 +1,49 @@
+# === General ignores ===
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+*.DS_Store
+*.old
+
+# === Docker-related ===
+**/.dockerignore
+docker-compose.override.yml
+
+# === Build artifacts ===
+/mydata/
+/home/*/mydata/
+/volumes/
+/data/
+*.tar
+
+# === Environment and secrets ===
+.env
+.env.*
+secrets/
+**/secrets*
+credentials.*
+*.pem
+*.key
+*.crt
+
+# === Git control ===
+.gitignore
+
+# === OS-specific ===
+# macOS
+.DS_Store
+# Windows
+Thumbs.db
+Desktop.ini
+
+# === Editor-specific ===
+# VS Code
+.vscode/
+# JetBrains
+.idea/
+# Emacs
+*~
+# Vim
+*.un~

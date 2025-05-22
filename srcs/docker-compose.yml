@@ -1,10 +1,6 @@
-version: '3.7'
-  
-  # This docker-compose manage 3 different containers/services (nginx, mariadb and wordpress)
 services:
-  #COMENTADO DE MOMENTO
-  #mariadb:
-    image: mariadb  # Fuerzo el nombre de la imagen para cumplir subject
+  mariadb:
+    image: mariadb
     container_name: mariadb
     build: ./requirements/mariadb
     env_file: .env
@@ -14,7 +10,7 @@ services:
     volumes:
       - db_vol:/var/lib/mysql
     networks:
-      -  inception
+      - inception
 
   nginx:
     image: nginx
@@ -32,8 +28,7 @@ services:
     depends_on:
       - wordpress
 
-# COMENTADO DE MOMENTO
-# wordpress:
+  wordpress:
     image: wordpress
     container_name: wordpress
     build: ./requirements/wordpress
@@ -49,18 +44,18 @@ services:
       - mariadb
 
 volumes:
- #db_vol:
+  db_vol:
     driver: local
     driver_opts:
       type: none # No se define un sitema de archivos especifico
-      device: '/home/jocuni-p/mydata/db_vol' # directorio del host donde se va a montar
+      device: "/home/${USER}/mydata/db_vol" # directorio del host donde se va a montar
       o: bind # Mapea una carpeta del host a dentro del contenedor.
 
   wp_vol:
     driver: local
     driver_opts:
       type: none
-      device: '/home/jocuni-p/mydata/wp_vol'
+      device: "/home/${USER}/mydata/wp_vol"
       o: bind
 
 networks:
