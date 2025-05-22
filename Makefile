@@ -22,10 +22,11 @@ setup:
 build: setup
 	@echo "[BUILD] Building Docker images and starting containers"
 	@$(COMPOSE) up -d --build
-	@echo "============================================================="
+	@echo "================================================================="
 	@echo "🔧 To ensure the domain '$(DOMAIN)' resolves locally,"
 	@echo "   ensure it's in /etc/hosts like this: 127.0.0.1 $(DOMAIN)"
-	@echo "============================================================="
+	@echo "================================================================="
+	@echo "\n Use 'make status' to get containers' info"
 
 down:
 	@echo "[DOWN] Stopping and removing containers and networks"
