@@ -1,10 +1,13 @@
 # debian OS penultimate stable version
-FROM debian:bullseye
+FROM debian:11.1
 
 # INSTALACION DE PAQUETES
 # OJO php-fpm POTSER NO CAL INSTALAR-LO
 # update and upgrade apt, install NGINX, Vim, Curl & OpenSSL(creacion/gestion de certificados)
-RUN apt-get update && apt-get upgrade -y && apt-get install -y nginx vim curl openssl php-fpm
+# RUN apt-get update && apt-get upgrade -y && apt-get install -y nginx vim curl openssl php-fpm
+
+RUN apt-get update && apt-get install -y php php-fpm php-mysql nginx curl openssl vim --fix-missing
+
 
 # GENERACION DEL CERTIFICADO
 RUN	mkdir -p /etc/nginx/ssl && openssl req -x509 -nodes \

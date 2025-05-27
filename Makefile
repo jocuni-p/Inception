@@ -30,21 +30,21 @@ build: setup
 
 down:
 	@echo "[DOWN] Stopping and removing containers and networks"
-	@$(COMPOSE) down
+	$(COMPOSE) down
 # 	Detiene la aplicacion y elimina containers, networks, creados por docker-compose up.
 # 	Forma limpia de cerrar y salir. Sin ninguna option No elimina imagenes ni volumenes.
 
 status:
 	@echo "\n*===========CONTAINERS===========*\n"
-	@docker ps -a
+	docker ps -a
 	@echo "\n*=============IMAGES=============*\n"
-	@docker images
+	docker images
 	@echo "\n*============VOLUMES=============*\n"
-	@docker volume ls
+	docker volume ls
 	@echo "\n*============NETWORKS=============*\n"
-	@docker network ls
+	docker network ls
 	@echo "\n*=====DISK SPACE COMPSUMTION=====*\n"
-	@docker system df
+	docker system df
 
 clean: down
 	@echo "[CLEAN] Removing local volume directories"
@@ -58,7 +58,8 @@ fclean: clean
 	@echo "[FCLEAN] Removing project images"
 	@docker rmi nginx wordpress mariadb 2>/dev/null || true
 #	Con 2>/dev/null redirijo alli cualquier posible mensaje de error.
-#	Si no existen los volumenes, hay '|| true' para que no se pare el Makefile 
+#	Si no existen los volumenes, hay '|| true' para que no se pare el Makefile
+	docker system prune -af --volumes
 
 re: fclean all
 
