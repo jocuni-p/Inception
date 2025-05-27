@@ -3,16 +3,40 @@
 PROJECT = inception
 DOMAIN = $(USER).42.fr
 
+
+SSL_DIR = srcs/requirements/nginx/conf/ssl
+SSL_KEY = $(SSL_DIR)/nginx.key
+SSL_CRT = $(SSL_DIR)/nginx.crt
+
+
 MYDATA_DIR = /home/$(USER)/mydata
 DB_DIR = $(MYDATA_DIR)/db_vol
 WP_DIR = $(MYDATA_DIR)/wp_vol
 COMPOSE = docker compose -f srcs/docker-compose.yml -p $(PROJECT)
 
+
+
+# ============= SSL Certificates =============
+
+$(SSL_DIR):
+	@mkdir -p $@
+
+$(SSL_KEY) $(SSL_CRT): | $(SSL_DIR)
+	@echo "[SSL] Generating self-signed certificates"
+	@openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+		-keyout $(SSL_KEY) \
+		-out $(SSL_CRT) \
+		-subj "/CN=$(DOMAIN)"
+
+
+
 # ================Rules===============
 #
 all: build
 
-setup:
+certs: $(SSL_KEY) $(SSL_CRT)
+
+setup: certs
 	@echo "[SETUP] Creating local volume directories in $(MYDATA_DIR)"
 	@mkdir -p $(DB_DIR) $(WP_DIR)
 	@echo "[SETUP] Ensuring $(DOMAIN) is in /etc/hosts"

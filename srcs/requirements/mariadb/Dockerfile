@@ -1,4 +1,4 @@
-FROM debian:11.1
+FROM debian:bullseye
 
 # Install MariaDB and all the necessary things to make it work.
 # We also delete temporary files to make it lighter
