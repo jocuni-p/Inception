@@ -19,7 +19,7 @@ services:
     env_file: .env
     restart: on-failure
     ports:
-      - "443:443"
+      - "443:443" # El puerto del contenedor se mapea al del host
     volumes:
       - wp_vol:/var/www/html
       - ./requirements/nginx/conf:/etc/nginx/conf.d
