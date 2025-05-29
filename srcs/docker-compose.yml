@@ -47,7 +47,7 @@ volumes:
   db_vol:
     driver: local
     driver_opts:
-      type: none # No se define un sitema de archivos especifico
+      type: none # No se define un sistema de archivos especifico
       device: "/home/${USER}/mydata/db_vol" # directorio del host donde se va a montar
       o: bind # Mapea una carpeta del host a dentro del contenedor.
 
