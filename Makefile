@@ -6,13 +6,15 @@
 #    By: jocuni-p <jocuni-p@student.42barcelona.com +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/29 14:23:57 by jocuni-p          #+#    #+#              #
-#    Updated: 2025/05/30 11:12:06 by jocuni-p         ###   ########.fr        #
+#    Updated: 2025/05/30 15:11:12 by jocuni-p         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # NOTA: Desde Makefile creo un certificado ssl que se guarda en el directorio
-# de Inception y a traves del Dockerfile lo copio dentro del container.
-
+# del proyeco Inception y a traves del Dockerfile lo copio dentro del container.
+# Se crearan 2 volumenes que estaran mapeados al directorio '~/mydata' del host
+# donde se guardara la informacion de forma persistente (independientemente del
+# estado de los containers). 
 # ============= VARIABLES ============ #
 
 PROJECT = inception
