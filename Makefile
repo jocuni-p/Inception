@@ -67,11 +67,13 @@ down:
 status:
 	@echo "\n📊 [STATUS] Checking services state"
 	@echo "----------- Containers -----------"
-	@docker ps -a --filter "name=inception_"
+#	@docker ps -a --filter "name=inception_"
+	@docker ps -a
 	@echo "\n----------- Networks ------------"
 	@docker network ls --filter "name=inception_"
 	@echo "\n----------- Volumes ------------"
-	@docker volume ls --filter "name=inception_"
+#	@docker volume ls --filter "name=inception_"
+	@docker volume ls
 	@echo "\n----------- Images -------------"
 	@docker images --filter "reference=inception_*"
 	@echo "\n---------- Disk Usage ----------"
