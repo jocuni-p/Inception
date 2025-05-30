@@ -1,7 +1,7 @@
 services:
   mariadb:
-    image: mariadb
-    container_name: mariadb
+#    image: mariadb
+#    container_name: mariadb
     build: ./requirements/mariadb
     env_file: .env
     restart: unless-stopped
@@ -13,8 +13,8 @@ services:
       - inception
 
   nginx:
-    image: nginx
-    container_name: nginx
+#    image: nginx
+#    container_name: nginx
     build: ./requirements/nginx
     env_file: .env
     restart: on-failure
@@ -29,8 +29,8 @@ services:
       - wordpress
 
   wordpress:
-    image: wordpress
-    container_name: wordpress
+#    image: wordpress
+#    container_name: wordpress
     build: ./requirements/wordpress
     env_file: .env
     restart: on-failure

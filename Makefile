@@ -6,7 +6,7 @@
 #    By: jocuni-p <jocuni-p@student.42barcelona.com +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/29 14:23:57 by jocuni-p          #+#    #+#              #
-#    Updated: 2025/05/29 17:48:09 by jocuni-p         ###   ########.fr        #
+#    Updated: 2025/05/30 11:12:06 by jocuni-p         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,6 @@ DB_DIR = $(MYDATA_DIR)/db_vol
 WP_DIR = $(MYDATA_DIR)/wp_vol
 COMPOSE = docker compose -f srcs/docker-compose.yml -p $(PROJECT)
 
-# SSL Configuration
 SSL_DIR = srcs/requirements/nginx/conf/ssl
 SSL_KEY = $(SSL_DIR)/nginx.key
 SSL_CRT = $(SSL_DIR)/nginx.crt
@@ -39,7 +38,7 @@ $(SSL_DIR):
 
 # Creara los 2 targets. El | verifica que exista una dependencia.
 # Crea un certificado autofirmado, sin contrasenya, valido por 1 anyo, 
-# con la clave rsa de 2048 bits, rutas de salida y establece mi dominio como el sujeto.
+# con la clave rsa de 2048 bits, rutas de salida y establece mi dominio como sujeto.
 $(SSL_KEY) $(SSL_CRT): | $(SSL_DIR)
 	@if [ ! -f $(SSL_KEY) ] || [ ! -f $(SSL_CRT) ]; then \
 		echo "[SSL] Generating certificates for $(DOMAIN) (user: $(USER))"; \
@@ -110,16 +109,26 @@ clean: down
 	@echo "[CLEAN] Removing local volumes and directories"
 	@-rm -rf $(DB_DIR) $(WP_DIR) 2>/dev/null || true
 #	Necesito tener permisos de sudo para eliminar estos directorios, sino pedira password
-	@-docker volume rm inception_db_vol inception_wp_vol 2>/dev/null || true
+#	@-docker volume rm inception_db_vol inception_wp_vol 2>/dev/null || true
+	@$(COMPOSE) down --rmi all
+
 
 fclean: clean
 	@echo "[FCLEAN] Removing all project resources"
-	@-docker rmi -f inception_nginx inception_wordpress inception_mariadb 2>/dev/null || true
-	@-docker network rm inception_network 2>/dev/null || true
+	@$(COMPOSE) down --rmi all --volumes --remove-orphans
 	@echo "[FCLEAN] Removing SSL certificates"
 	@-rm -rf $(SSL_DIR) 2>/dev/null || true
-	@echo "[FCLEAN] Removing unused Docker objects"
-	@docker system prune -af --filter "label=com.docker.compose.project=inception"
+#	--rmi all: elimina todas las imágenes asociadas al proyecto.
+#	--volumes: borra los volúmenes anónimos creados por docker-compose (no afecta a db_vol y wp_vol).
+#	--remove-orphans: elimina contenedores sueltos que comparten la misma red del proyecto.
+
+# @echo "[FCLEAN] Removing all project resources"
+# @-docker rmi -f inception_nginx inception_wordpress inception_mariadb 2>/dev/null || true
+# @-docker network rm inception_network 2>/dev/null || true
+# @echo "[FCLEAN] Removing SSL certificates"
+# @-rm -rf $(SSL_DIR) 2>/dev/null || true
+# @echo "[FCLEAN] Removing unused Docker objects"
+# @docker system prune -af --filter "label=com.docker.compose.project=inception"
 #	Elimina (-all -force) recursos no utilizados (objetos huérfanos) —como contenedores detenidos, 
 #	redes no utilizadas, volúmenes huérfanos e imágenes dangling— solo si están 
 #	asociados a la etiqueta 'inception'.
