@@ -6,7 +6,7 @@
 #    By: jocuni-p <jocuni-p@student.42barcelona.com +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/29 14:23:57 by jocuni-p          #+#    #+#              #
-#    Updated: 2025/05/30 15:11:12 by jocuni-p         ###   ########.fr        #
+#    Updated: 2025/05/30 15:39:53 by jocuni-p         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -94,7 +94,7 @@ build: setup
 	@echo "============================================"
 
 down:
-	@echo "[DOWN] Stopping containers and networks"
+	@echo "[DOWN] Stopping containers and network"
 	@$(COMPOSE) down
 
 status:
@@ -115,15 +115,15 @@ status:
 	@docker system df
 
 clean: down
-	@echo "[CLEAN] Removing local volumes and directories"
+	@echo "[CLEAN] Removing containers, network, local volumes and its directories"
 	@-rm -rf $(DB_DIR) $(WP_DIR) 2>/dev/null || true
 #	Necesito tener permisos de sudo para eliminar estos directorios, sino pedira password
 #	@-docker volume rm inception_db_vol inception_wp_vol 2>/dev/null || true
-	@$(COMPOSE) down --rmi all
+	@$(COMPOSE) down
 
 
 fclean: clean
-	@echo "[FCLEAN] Removing all project resources"
+	@echo "[FCLEAN] Removing ALL project resources"
 	@$(COMPOSE) down --rmi all --volumes --remove-orphans
 	@echo "[FCLEAN] Removing SSL certificates"
 	@-rm -rf $(SSL_DIR) 2>/dev/null || true
@@ -140,10 +140,10 @@ help:
 	@echo "\n🚀 Inception Project Makefile Help"
 	@echo "make all          Build and start all services (alias for make build)"
 	@echo "make build        Build and start containers"
-	@echo "make down         Stop containers (not remove: volumes, images and ssl certifies"
-	@echo "make status       Show all containers info"
-	@echo "make clean        Stop containers and remove containers' volumes"
-	@echo "make fclean       Full cleanup (containers, images, networks)"
+	@echo "make down         Stop containers (remove: containers and network)"
+	@echo "make status       Show all containers' info"
+	@echo "make clean        Remove containers, network, intern volumes"
+	@echo "make fclean       Full cleanup (containers, network, images, intern volumes, ssl certificate from container and other related files)"
 	@echo "make re           Rebuild everything from scratch"
 	@echo "make certs        Generate SSL certificates only"
 

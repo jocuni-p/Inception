@@ -3,7 +3,6 @@ FROM debian:bullseye
 
 # INSTALACION DE PAQUETES
 # Instala solo lo esencial y nginx
-# El certificado lo creare (con Makefile) fuera del container y lo copiare
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     nginx \
@@ -18,12 +17,12 @@ RUN mkdir -p /etc/nginx/ssl /var/run/nginx /var/www/html
 # Copy SSL certificates and config
 COPY conf/ssl/nginx.crt /etc/nginx/ssl/
 COPY conf/ssl/nginx.key /etc/nginx/ssl/
-# nginx.conf:la conf global de nginx y default.conf:la especifica de mi wordpress
+# nginx.conf:la conf global de nginx y default.conf:la conf especifica de mi wordpress
 COPY ./conf/nginx.conf /etc/nginx/nginx.conf
 COPY ./conf/default.conf /etc/nginx/conf.d/default.conf
 
 
-# We set the owner and proprietary group of the folder /var/www/html (in Debian Nginx runs under the user www-data)
+# We set the owner and proprietary group of the folder /var/www/html (in Debian, Nginx runs under the user www-data)
 # We set permissions for the folder 
 # Protect private key permissions
 # Redirect the logs to Docker
