@@ -80,10 +80,16 @@ setup: certs
 build: setup
 	@echo "[BUILD] Building containers with TLS 1.3"
 	@$(COMPOSE) up -d --build
+#	Para que construya sin guardar las capas en la cache:
+#	@$(COMPOSE) build --no-cache
+#	@$(COMPOSE) up -d
 	@echo "\n✅ [SUCCESS] Inception project is running!"
+	@echo "============================================"
 	@echo "• Access: https://$(DOMAIN)"
 	@echo "• Check containers: make status"
 	@echo "• Stop services: make down"
+	@echo "• Help: make help"
+	@echo "============================================"
 
 down:
 	@echo "[DOWN] Stopping containers and networks"
@@ -96,6 +102,7 @@ status:
 	@docker ps -a
 	@echo "\n----------- Networks ------------"
 	@docker network ls --filter "name=inception_"
+#	@docker network ls
 	@echo "\n----------- Volumes ------------"
 #	@docker volume ls --filter "name=inception_"
 	@docker volume ls
@@ -122,18 +129,6 @@ fclean: clean
 #	--volumes: borra los volúmenes anónimos creados por docker-compose (no afecta a db_vol y wp_vol).
 #	--remove-orphans: elimina contenedores sueltos que comparten la misma red del proyecto.
 
-# @echo "[FCLEAN] Removing all project resources"
-# @-docker rmi -f inception_nginx inception_wordpress inception_mariadb 2>/dev/null || true
-# @-docker network rm inception_network 2>/dev/null || true
-# @echo "[FCLEAN] Removing SSL certificates"
-# @-rm -rf $(SSL_DIR) 2>/dev/null || true
-# @echo "[FCLEAN] Removing unused Docker objects"
-# @docker system prune -af --filter "label=com.docker.compose.project=inception"
-#	Elimina (-all -force) recursos no utilizados (objetos huérfanos) —como contenedores detenidos, 
-#	redes no utilizadas, volúmenes huérfanos e imágenes dangling— solo si están 
-#	asociados a la etiqueta 'inception'.
-#	Con '2>/dev/null' redirijo alli cualquier posible mensaje de error.
-#	Si no existen los volumenes, hay '|| true' para que no se pare el Makefile
 
 re: fclean all
 
@@ -141,16 +136,15 @@ re: fclean all
 
 help:
 	@echo "\n🚀 Inception Project Makefile Help"
-	@echo "make              Build and start all services (alias for make build)"
+	@echo "make all          Build and start all services (alias for make build)"
 	@echo "make build        Build and start containers"
-	@echo "make down         Stop containers"
-	@echo "make status       Show containers status"
-	@echo "make clean        Stop containers and remove volumes"
+	@echo "make down         Stop containers (not remove: volumes, images and ssl certifies"
+	@echo "make status       Show all containers info"
+	@echo "make clean        Stop containers and remove containers' volumes"
 	@echo "make fclean       Full cleanup (containers, images, networks)"
 	@echo "make re           Rebuild everything from scratch"
 	@echo "make certs        Generate SSL certificates only"
-	@echo "make help         Show this help message"
 
 
-.PHONY: all setup build down status clean fclean re
+.PHONY: all setup build down status clean fclean re help
 

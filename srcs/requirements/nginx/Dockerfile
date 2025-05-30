@@ -19,8 +19,8 @@ RUN mkdir -p /etc/nginx/ssl /var/run/nginx /var/www/html
 COPY conf/ssl/nginx.crt /etc/nginx/ssl/
 COPY conf/ssl/nginx.key /etc/nginx/ssl/
 # nginx.conf:la conf global de nginx y default.conf:la especifica de mi wordpress
-COPY conf/nginx.conf /etc/nginx/nginx.conf
-COPY conf/default.conf /etc/nginx/conf.d/
+COPY ./conf/nginx.conf /etc/nginx/nginx.conf
+COPY ./conf/default.conf /etc/nginx/conf.d/default.conf
 
 
 # We set the owner and proprietary group of the folder /var/www/html (in Debian Nginx runs under the user www-data)
