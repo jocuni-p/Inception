@@ -19,7 +19,7 @@
 
 PROJECT = inception
 DOMAIN = $(USER).42.fr
-MYDATA_DIR = ~/mydata
+MYDATA_DIR = /home/$(USER)/mydata
 DB_DIR = $(MYDATA_DIR)/db_vol
 WP_DIR = $(MYDATA_DIR)/wp_vol
 COMPOSE = docker compose -f srcs/docker-compose.yml -p $(PROJECT)
@@ -38,17 +38,22 @@ $(SSL_DIR):
 	@echo "[SSL] Creating SSL directory structure"
 	@mkdir -p $@
 
-# Creara los 2 targets. El | verifica que exista una dependencia.
+# Creara los 2 targets. 
+# El '|' verifica solo que exista la dependencia. No reconstruye cada vez que cambie.
 # Crea un certificado autofirmado, sin contrasenya, valido por 1 anyo, 
 # con la clave rsa de 2048 bits, rutas de salida y establece mi dominio como sujeto.
 $(SSL_KEY) $(SSL_CRT): | $(SSL_DIR)
+	@if ! command -v openssl > /dev/null 2>&1; then \
+        echo "Error: openssl is not installed."; \
+        exit 1; \
+	fi
 	@if [ ! -f $(SSL_KEY) ] || [ ! -f $(SSL_CRT) ]; then \
 		echo "[SSL] Generating certificates for $(DOMAIN) (user: $(USER))"; \
 		openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 			-keyout $(SSL_KEY) \
 			-out $(SSL_CRT) \
 			-subj "/CN=$(DOMAIN)"; \
-		chmod 400 $(SSL_KEY); \
+		chmod 400 $(SSL_KEY) $(SSL_CRT); \
 		echo "[SSL] Certificates generated successfully"; \
 	else \
 		echo "[SSL] Using existing certificates"; \
@@ -93,10 +98,6 @@ build: setup
 	@echo "• Help: make help"
 	@echo "============================================"
 
-down:
-	@echo "[DOWN] Stopping containers and network"
-	@$(COMPOSE) down
-
 status:
 	@echo "\n📊 [STATUS] Checking services state"
 	@echo "----------- Containers -----------"
@@ -114,20 +115,25 @@ status:
 	@echo "\n---------- Disk Usage ----------"
 	@docker system df
 
-clean: down
-	@echo "[CLEAN] Removing containers, network, local volumes and its directories"
-	@-rm -rf $(DB_DIR) $(WP_DIR) 2>/dev/null || true
-#	Necesito tener permisos de sudo para eliminar estos directorios, sino pedira password
-#	@-docker volume rm inception_db_vol inception_wp_vol 2>/dev/null || true
+down:
+	@echo "[DOWN] Stopping and removing containers and network (doesn't remove persistent data)"
 	@$(COMPOSE) down
 
+clean: 
+	@echo "[CLEAN] Removing containers, network and volumes (local + containerized and its directories)"
+	@$(COMPOSE) down
+	@-rm -rf $(DB_DIR) $(WP_DIR) 2>/dev/null || true
+#	Necesito tener permisos de sudo para eliminar estos directorios de arriba, sino pedira password
+	@-docker volume rm inception_db_vol inception_wp_vol 2>/dev/null || true
+#	@$(COMPOSE) down
+#	'-' al inicio, ignora errores en los comandos criticos
 
 fclean: clean
 	@echo "[FCLEAN] Removing ALL project resources"
 	@$(COMPOSE) down --rmi all --volumes --remove-orphans
 	@echo "[FCLEAN] Removing SSL certificates"
 	@-rm -rf $(SSL_DIR) 2>/dev/null || true
-#	--rmi all: elimina todas las imágenes asociadas al proyecto.
+#	--rmi all: elimina todas las imágenes asociadas al proyecto, incluido cache
 #	--volumes: borra los volúmenes anónimos creados por docker-compose (no afecta a db_vol y wp_vol).
 #	--remove-orphans: elimina contenedores sueltos que comparten la misma red del proyecto.
 
