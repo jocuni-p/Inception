@@ -6,7 +6,7 @@
 #    By: jocuni-p <jocuni-p@student.42barcelona.com +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/29 14:23:57 by jocuni-p          #+#    #+#              #
-#    Updated: 2025/05/30 15:39:53 by jocuni-p         ###   ########.fr        #
+#    Updated: 2025/06/03 12:49:13 by jocuni-p         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,8 +30,8 @@ SSL_CRT = $(SSL_DIR)/nginx.crt
 
 # ============= SSL SETUP ============ #
 
-# NGINX necesita un certificado SSL para configurar el HTTPS.
-# Para el proyecto generare un certificado SSL autofirmado y asi salgo del paso.
+# NGINX necesita un certificado SSL para proteger el tunel de comunicacion de HTTP.
+# Para el proyecto generare un certificado SSL autofirmado.
 
 # # Asegura que el directorio para los certificados exista antes de generarlos, sino lo crea
 $(SSL_DIR):
@@ -39,7 +39,7 @@ $(SSL_DIR):
 	@mkdir -p $@
 
 # Creara los 2 targets. 
-# El '|' verifica solo que exista la dependencia. No reconstruye cada vez que cambie.
+# El '|' verifica solo que exista la dependencia. No reconstruye si esta cambia.
 # Crea un certificado autofirmado, sin contrasenya, valido por 1 anyo, 
 # con la clave rsa de 2048 bits, rutas de salida y establece mi dominio como sujeto.
 $(SSL_KEY) $(SSL_CRT): | $(SSL_DIR)
@@ -68,7 +68,7 @@ certs: $(SSL_KEY) $(SSL_CRT)
 
 all: build
 
-# Crea los volumenes locales y comprueba si mi dominio esta en /etc/hosts
+# Crea los certificados, los volumenes locales y comprueba si mi dominio esta en /etc/hosts
 setup: certs
 	@echo "[SETUP] 🛠️  Initializing project environment for $(DOMAIN)"
 	@echo "[SETUP] Creating local volume directories in $(MYDATA_DIR)"
@@ -120,12 +120,13 @@ down:
 	@$(COMPOSE) down
 
 clean: 
-	@echo "[CLEAN] Removing containers, network and volumes (local + containerized and its directories)"
-	@$(COMPOSE) down
-	@-rm -rf $(DB_DIR) $(WP_DIR) 2>/dev/null || true
+	@echo "[CLEAN] Removing containers, network and volumes (??????????????local + containerized and its directories)"
+#	@$(COMPOSE) down
+	@-rm -rf $(DB_DIR) $(WP_DIR) 2>/dev/null || true 
+# 	VERIFICAR SI HACE ALGO Y SI DEBERIA IR DESPIUES DE BORRAR LOS VOLS DEL CONTAINER???
 #	Necesito tener permisos de sudo para eliminar estos directorios de arriba, sino pedira password
 	@-docker volume rm inception_db_vol inception_wp_vol 2>/dev/null || true
-#	@$(COMPOSE) down
+	@$(COMPOSE) down
 #	'-' al inicio, ignora errores en los comandos criticos
 
 fclean: clean
