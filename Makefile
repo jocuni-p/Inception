@@ -121,9 +121,7 @@ down:
 
 clean: 
 	@echo "[CLEAN] Removing containers, network and volumes (??????????????local + containerized and its directories)"
-#	@$(COMPOSE) down
 	@-rm -rf $(DB_DIR) $(WP_DIR) 2>/dev/null || true 
-# 	VERIFICAR SI HACE ALGO Y SI DEBERIA IR DESPIUES DE BORRAR LOS VOLS DEL CONTAINER???
 #	Necesito tener permisos de sudo para eliminar estos directorios de arriba, sino pedira password
 	@-docker volume rm inception_db_vol inception_wp_vol 2>/dev/null || true
 	@$(COMPOSE) down
