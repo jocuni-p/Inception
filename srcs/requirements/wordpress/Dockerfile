@@ -22,7 +22,6 @@ RUN chown -R www-data:www-data /var/www/html/ \
     && chmod -R 755 /var/www/html/
 
 # Set working directory
-
 WORKDIR /var/www/html/
 
 # Copy our config file and script to execute it in case is not configured already
