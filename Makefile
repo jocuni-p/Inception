@@ -76,7 +76,7 @@ setup: certs
 	@chmod 755 $(MYDATA_DIR)
 	@if ! grep -q "$(DOMAIN)" /etc/hosts; then \
 		echo ""; \
-		echo "⚠️  Warning: Domain '$(DOMAIN)' not found in /etc/hosts  ⚠️"; \
+		echo "⚠️  Warning: Domain '$(DOMAIN)' not found in /etc/hosts ⚠️"; \
 		echo "For proper functionality, add this line to /etc/hosts:"; \
 		echo "127.0.0.1 $(DOMAIN)"; \
 		echo "You may need sudo privileges to edit this file."; \
@@ -114,20 +114,34 @@ status:
 	@docker images
 	@echo "\n---------- Disk Usage ----------"
 	@docker system df
+	@echo "\n------ Persistent Volumes ------"
+		@echo "PATH				STATUS"
+	@if [ -d "$(DB_DIR)" ]; then \
+		echo "$(DB_DIR)	EXISTS"; \
+	else \
+		echo "$(DB_DIR)	does NOT exist."; \
+	fi
+	@if [ -d "$(WP_DIR)" ]; then \
+		echo "$(WP_DIR) 	EXISTS\n"; \
+	else \
+		echo "$(WP_DIR)	does NOT exist.\n"; \
+	fi
 
-down:
-	@echo "[DOWN] Stopping and removing containers and network (doesn't remove persistent data)"
+clean:
 	@$(COMPOSE) down
-
-clean: 
-	@echo "[CLEAN] Removing containers, network and volumes (??????????????local + containerized and its directories)"
-	@-rm -rf $(DB_DIR) $(WP_DIR) 2>/dev/null || true 
-#	Necesito tener permisos de sudo para eliminar estos directorios de arriba, sino pedira password
-	@-docker volume rm inception_db_vol inception_wp_vol 2>/dev/null || true
-	@$(COMPOSE) down
-#	'-' al inicio, ignora errores en los comandos criticos
+	@echo "[CLEAN] Containers and network removed successfully (PERSISTENT DATA NOT AFECTED)"
 
 fclean: clean
+#	Aseguro que los contenedores están detenidos y liberan los volúmenes antes de intentar eliminarlos.
+	@if [ -d "$(DB_DIR)" ] || [ -d "$(WP_DIR)" ]; then \
+    		echo "[FCLEAN] Attempting to remove DB and WP persistent volumes with sudo..."; \
+    		sudo rm -rf $(DB_DIR) $(WP_DIR); \
+	else \
+    		echo "[FCLEAN] No volume directories found to delete."; \
+	fi
+	@-docker volume rm inception_db_vol inception_wp_vol 2>/dev/null || true
+#	'-' al inicio, ignora errores en los comandos criticos
+	@echo "[FCLEAN] Removed intern volumes succesfully."
 	@echo "[FCLEAN] Removing ALL project resources"
 	@$(COMPOSE) down --rmi all --volumes --remove-orphans
 	@echo "[FCLEAN] Removing SSL certificates"
@@ -136,8 +150,7 @@ fclean: clean
 #	--volumes: borra los volúmenes anónimos creados por docker-compose (no afecta a db_vol y wp_vol).
 #	--remove-orphans: elimina contenedores sueltos que comparten la misma red del proyecto.
 
-
-re: fclean all
+re: fclean all status
 
 # ============= Help ============ #
 
