@@ -10,23 +10,6 @@ services:
     networks:
       - inception
 
-  nginx:
-    build: ./requirements/nginx
-    env_file: .env
-    restart: on-failure
-    ports:
-      - "443:443" # El puerto del contenedor se mapea al del host
-#    volumes:
-#      - wp_vol:/var/www/html
-#      - ./requirements/nginx/conf:/etc/nginx/conf.d
-    volumes:
-      - wp_vol:/var/www/html
-      - ./requirements/nginx/conf/default.conf:/etc/nginx/conf.d/default.conf
-    networks:
-      - inception
-    depends_on:
-      - wordpress
-
   wordpress:
     build: ./requirements/wordpress
     env_file: .env
@@ -39,6 +22,20 @@ services:
       - inception
     depends_on:
       - mariadb
+
+  nginx:
+    build: ./requirements/nginx
+    env_file: .env
+    restart: on-failure
+    ports:
+      - "443:443" # El puerto del contenedor se mapea al del host
+    volumes:
+      - wp_vol:/var/www/html # Comparte volumen con wordpress con el contenido de este ultimo
+      - ./requirements/nginx/conf/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - inception
+    depends_on:
+      - wordpress # Hasta que wordpress no este listo no se arrancara nginx
 
 volumes:
   db_vol:
