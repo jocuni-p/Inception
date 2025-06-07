@@ -6,7 +6,7 @@
 #    By: jocuni-p <jocuni-p@student.42barcelona.com +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/29 14:23:57 by jocuni-p          #+#    #+#              #
-#    Updated: 2025/06/03 12:49:13 by jocuni-p         ###   ########.fr        #
+#    Updated: 2025/06/07 17:29:51 by jocuni-p         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -94,26 +94,24 @@ build: setup
 	@echo "============================================"
 	@echo "• Access: https://$(DOMAIN)"
 	@echo "• Check containers: make status"
-	@echo "• Stop services: make down"
+	@echo "• Stop & Remove services: make clean"
 	@echo "• Help: make help"
 	@echo "============================================"
 
 status:
 	@echo "\n📊 [STATUS] Checking services state"
-	@echo "----------- Containers -----------"
+	@echo "----------- Images -------------"
+#	@docker images --filter "reference=inception_*"
+	@docker images
+	@echo "\n----------- Containers -----------"
 #	@docker ps -a --filter "name=inception_"
 	@docker ps -a
 	@echo "\n----------- Networks ------------"
-	@docker network ls --filter "name=inception_"
-#	@docker network ls
-	@echo "\n----------- Volumes ------------"
+#	@docker network ls --filter "name=inception_"
+	@docker network ls
+	@echo "\n--- Volumes (into containers) ----"
 #	@docker volume ls --filter "name=inception_"
 	@docker volume ls
-	@echo "\n----------- Images -------------"
-#	@docker images --filter "reference=inception_*"
-	@docker images
-	@echo "\n---------- Disk Usage ----------"
-	@docker system df
 	@echo "\n------ Persistent Volumes ------"
 		@echo "PATH				STATUS"
 	@if [ -d "$(DB_DIR)" ]; then \
@@ -126,6 +124,8 @@ status:
 	else \
 		echo "$(WP_DIR)	does NOT exist.\n"; \
 	fi
+	@echo "\n---------- Disk Usage ----------"
+	@docker system df
 
 clean:
 	@$(COMPOSE) down
@@ -157,14 +157,10 @@ re: fclean all status
 help:
 	@echo "\n🚀 Inception Project Makefile Help"
 	@echo "make all          Build and start all services (alias for make build)"
-	@echo "make build        Build and start containers"
-	@echo "make down         Stop containers (remove: containers and network)"
-	@echo "make status       Show all containers' info"
-	@echo "make clean        Remove containers, network, intern volumes"
-	@echo "make fclean       Full cleanup (containers, network, images, intern volumes, ssl certificate from container and other related files)"
-	@echo "make re           Rebuild everything from scratch"
 	@echo "make certs        Generate SSL certificates only"
-
+	@echo "make status       Show all containers' info"
+	@echo "make clean         Stop & Remove containers and network (like 'docker-compose down')"
+	@echo "make fclean       Full cleanup (containers, network, images, intern volumes, persistent volumes in host, ssl certificate and other ...)"
+	@echo "make re           Cleanup everything and Rebuild"
 
 .PHONY: all setup build down status clean fclean re help
-
