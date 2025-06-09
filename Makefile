@@ -160,7 +160,7 @@ help:
 	@echo "make certs        Generate SSL certificates only"
 	@echo "make status       Show all containers' info"
 	@echo "make clean         Stop & Remove containers and network (like 'docker-compose down')"
-	@echo "make fclean       Full cleanup (containers, network, images, intern volumes, persistent volumes in host, ssl certificate and other ...)"
+	@echo "make fclean       Full cleanup (containers, network, images, ALL volumes, ssl certs)"
 	@echo "make re           Cleanup everything and Rebuild"
 
 .PHONY: all setup build down status clean fclean re help

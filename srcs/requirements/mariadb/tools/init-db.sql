@@ -1,3 +1,5 @@
+-- Script en lenguage SQL que crea base de datos, usuarios y permisos, usando variables del .env
+
 CREATE DATABASE IF NOT EXISTS `${MYSQL_DATABASE}`;
 
 -- User for WordPress
