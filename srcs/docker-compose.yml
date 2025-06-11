@@ -3,6 +3,10 @@ services:
     build: ./requirements/mariadb
     env_file: .env
     restart: unless-stopped
+    secrets:
+      - db_user
+      - db_password
+      - db_root_password
     expose: 
       - "3306"
     volumes:
@@ -56,3 +60,10 @@ networks:
   inception:
     driver: bridge
 
+secrets:
+  db_user:
+    file: ../secrets/db_user.txt
+  db_password:
+    file: ../secrets/db_password.txt
+  db_root_password:
+    file: ../secrets/db_root_password.txt
