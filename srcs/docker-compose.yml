@@ -17,11 +17,14 @@ services:
   wordpress:
     build: ./requirements/wordpress
     env_file: .env
-    restart: on-failure
+    restart: unless-stopped
     expose:
       - "9000"
     volumes:
       - wp_vol:/var/www/html
+    secrets:
+      - db_user
+      - db_password
     networks:
       - inception
     depends_on:
@@ -29,8 +32,8 @@ services:
 
   nginx:
     build: ./requirements/nginx
-    env_file: .env
-    restart: on-failure
+    env_file: .env # solo si voy a necesitar alguna variable de env
+    restart: unless-stopped
     ports:
       - "443:443" # El puerto del contenedor se mapea al del host
     volumes:

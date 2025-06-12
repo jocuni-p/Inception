@@ -10,15 +10,14 @@ RUN apt-get update && \
 	# Limpia la cache de paquetes y temporales no necesarios despues
 	# de la instalacion (aligera tamanyo de la imagen)
 
-# Create necessary directories
-# ssl:para certificados
-# html:dir raiz del wordpress
+# Create necessary directories (ssl para certs y html para wordpress)
 RUN mkdir -p /etc/nginx/ssl /var/www/html 
 
-# Copy SSL certificates and config
+# Copy SSL certificates
 COPY conf/ssl/nginx.crt /etc/nginx/ssl/
 COPY conf/ssl/nginx.key /etc/nginx/ssl/
 
+# Copia los files de configuarcion
 # nginx.conf:la conf global de nginx y default.conf:la conf especifica de mi wordpress
 COPY ./conf/nginx.conf /etc/nginx/nginx.conf
 COPY ./conf/default.conf /etc/nginx/conf.d/default.conf
