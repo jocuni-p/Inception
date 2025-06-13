@@ -1,3 +1,39 @@
-.env
-secrets/
+# === General ignores ===
+*.log
+*.tmp
+*.swp
+*.DS_Store
 
+# === Docker-related ===
+**/.dockerignore
+docker-compose.override.yml
+
+# === Build artifacts ===
+/mydata/
+/home/*/mydata/
+/volumes/
+/data/
+*.tar
+
+# === Environment and secrets ===
+#.env
+.env.*
+*secrets/
+**/secrets*
+credentials.*
+*.pem
+*.key
+*.crt
+
+# === Git control ===
+#.gitignore
+
+# === OS-specific ===
+# macOS
+.DS_Store
+
+# === Editor-specific ===
+# VS Code
+.vscode/
+# Vim
+*.un~

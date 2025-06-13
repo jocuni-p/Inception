@@ -147,7 +147,7 @@ fclean: clean
 	@echo "[FCLEAN] Removing SSL certificates"
 	@-rm -rf $(SSL_DIR) 2>/dev/null || true
 	@docker builder prune
-	@echo "[FCLEAN]🧹🧹🧹 Removed whole images' build CACHE."
+	@echo "[FCLEAN]🧹🧹🧹 Removed images' build CACHE."
 #	--rmi all: elimina todas las imágenes asociadas al proyecto, incluido cache
 #	--volumes: borra los volúmenes anónimos creados por docker-compose (no afecta a db_vol y wp_vol).
 #	--remove-orphans: elimina contenedores sueltos que comparten la misma red del proyecto.
@@ -162,7 +162,7 @@ help:
 	@echo "make certs        Generate SSL certificates only"
 	@echo "make status       Show all containers' info"
 	@echo "make clean         Stop & Remove containers and network (like 'docker-compose down')"
-	@echo "make fclean       Full cleanup (containers, network, images, ALL volumes, ssl certs)"
+	@echo "make fclean       Full cleanup (containers, network, images, ALL volumes, ssl certs, images cache)"
 	@echo "make re           Cleanup everything and Rebuild"
 
 .PHONY: all setup build down status clean fclean re help

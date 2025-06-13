@@ -11,7 +11,7 @@ services:
       - "3306"
     volumes:
       - db_vol:/var/lib/mysql
-      - ../secrets/db_user.txt:/run/secrets/db_user:ro
+      - ../secrets/db_user.txt:/run/secrets/db_user:ro # read only
       - ../secrets/db_password.txt:/run/secrets/db_password:ro
       - ../secrets/db_root_password.txt:/run/secrets/db_root_password:ro
     networks:
@@ -25,8 +25,9 @@ services:
       - "9000"
     volumes:
       - wp_vol:/var/www/html
-      - ../secrets/db_user.txt:/run/secrets/db_user:ro
+      - ../secrets/db_user.txt:/run/secrets/db_user:ro # read only
       - ../secrets/db_password.txt:/run/secrets/db_password:ro
+
         #    secrets:
         #      - db_user
         #      - db_password
