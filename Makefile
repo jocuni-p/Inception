@@ -134,7 +134,7 @@ clean:
 fclean: clean
 #	Aseguro que los contenedores están detenidos y liberan los volúmenes antes de intentar eliminarlos.
 	@if [ -d "$(DB_DIR)" ] || [ -d "$(WP_DIR)" ]; then \
-    		echo "[FCLEAN] Attempting to remove DB and WP persistent volumes with sudo..."; \
+    		echo "[FCLEAN] 🧹Attempting to remove DB and WP persistent volumes with sudo..."; \
     		sudo rm -rf $(DB_DIR) $(WP_DIR); \
 	else \
     		echo "[FCLEAN] No volume directories found to delete."; \
@@ -146,6 +146,8 @@ fclean: clean
 	@$(COMPOSE) down --rmi all --volumes --remove-orphans
 	@echo "[FCLEAN] Removing SSL certificates"
 	@-rm -rf $(SSL_DIR) 2>/dev/null || true
+	@docker builder prune
+	@echo "[FCLEAN]🧹🧹🧹 Removed whole images' build CACHE."
 #	--rmi all: elimina todas las imágenes asociadas al proyecto, incluido cache
 #	--volumes: borra los volúmenes anónimos creados por docker-compose (no afecta a db_vol y wp_vol).
 #	--remove-orphans: elimina contenedores sueltos que comparten la misma red del proyecto.
