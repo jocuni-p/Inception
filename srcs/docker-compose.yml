@@ -3,14 +3,17 @@ services:
     build: ./requirements/mariadb
     env_file: .env
     restart: unless-stopped
-    secrets:
-      - db_user
-      - db_password
-      - db_root_password
+      #    secrets:
+      #      - db_user
+      #      - db_password
+      #      - db_root_password
     expose: 
       - "3306"
     volumes:
       - db_vol:/var/lib/mysql
+      - ../secrets/db_user.txt:/run/secrets/db_user:ro
+      - ../secrets/db_password.txt:/run/secrets/db_password:ro
+      - ../secrets/db_root_password.txt:/run/secrets/db_root_password:ro
     networks:
       - inception
 
@@ -22,9 +25,11 @@ services:
       - "9000"
     volumes:
       - wp_vol:/var/www/html
-    secrets:
-      - db_user
-      - db_password
+      - ../secrets/db_user.txt:/run/secrets/db_user:ro
+      - ../secrets/db_password.txt:/run/secrets/db_password:ro
+        #    secrets:
+        #      - db_user
+        #      - db_password
     networks:
       - inception
     depends_on:
@@ -62,11 +67,11 @@ volumes:
 networks:
   inception:
     driver: bridge
-
-secrets:
-  db_user:
-    file: ../secrets/db_user.txt
-  db_password:
-    file: ../secrets/db_password.txt
-  db_root_password:
-    file: ../secrets/db_root_password.txt
+      #Lo siguiente solo tiene efecto en modo Swarm
+      #secrets:
+      #  db_user:
+      #    file: ../secrets/db_user.txt
+      #  db_password:
+      #    file: ../secrets/db_password.txt
+      #  db_root_password:
+      #    file: ../secrets/db_root_password.txt

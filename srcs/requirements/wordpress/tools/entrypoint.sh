@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Exportar los secretos ANTES de usarlos
+export MYSQL_USER=$(cat /run/secrets/db_user)
+export MYSQL_PASSWORD=$(cat /run/secrets/db_password)
+
 # Waiting for MariaDB
 echo "Waiting for MariaDB to be ready..."
 until mysql -h mariadb -u ${MYSQL_USER} -p${MYSQL_PASSWORD} -e "SELECT 1" >/dev/null 2>&1; do
