@@ -134,7 +134,7 @@ fclean: clean
 		sudo rm -rf $(MYDATA_DIR); \
 	else \
 		echo "[FCLEAN] No persistent data directory found at $(MYDATA_DIR)."; \
-	f
+	fi
 	@-docker volume rm inception_db_vol inception_wp_vol 2>/dev/null || true
 #	'-' al inicio, ignora errores en los comandos criticos
 	@echo "[FCLEAN] Removed intern volumes succesfully."
