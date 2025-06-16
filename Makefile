@@ -133,7 +133,13 @@ clean:
 
 fclean: clean
 #	Aseguro que los contenedores están detenidos y liberan los volúmenes antes de intentar eliminarlos.
-	@if [ -d "$(DB_DIR)" ] || [ -d "$(WP_DIR)" ]; then \
+	@if [ -d "$(MYDATA_DIR)" ]; then \
+		echo "[FCLEAN] 🧹 Removing full persistent data directory $(MYDATA_DIR) with sudo..."; \
+		sudo rm -rf $(MYDATA_DIR); \
+	else \
+		echo "[FCLEAN] No persistent data directory found at $(MYDATA_DIR)."; \
+	fi
+#	@if [ -d "$(DB_DIR)" ] || [ -d "$(WP_DIR)" ]; then \
     		echo "[FCLEAN] 🧹Attempting to remove DB and WP persistent volumes with sudo..."; \
     		sudo rm -rf $(DB_DIR) $(WP_DIR); \
 	else \
