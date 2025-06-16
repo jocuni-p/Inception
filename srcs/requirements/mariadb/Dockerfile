@@ -21,18 +21,13 @@ COPY conf/50-server.cnf /etc/mysql/mariadb.conf.d/
 # Script que crea base de datos y usuarios, usando variables del .env
 COPY tools/init-db.sql /docker-entrypoint-initdb.d/init-db.template
 
-# Crea el script 'entrypoint'que sera ejecutado al arrancar el conainer.
-# Extrae los valores de los secretos, que estan montados en volumenes como archivos y se inyectan en envsubst.
-# 'envsubst' sustituye las variables de entorno del .template (archivo de texto) por su valor y lo renombra como .sql 
-# Luego lanzo mariadb con ese archivo ya bien rellenado
-RUN echo '#!/bin/bash\nset -e\n\
-export MYSQL_USER=$(cat /run/secrets/db_user)\n\
-export MYSQL_PASSWORD=$(cat /run/secrets/db_password)\n\
-export MYSQL_ROOT_PASSWORD=$(cat /run/secrets/db_root_password)\n\
-envsubst < /docker-entrypoint-initdb.d/init-db.template > /docker-entrypoint-initdb.d/init-db.sql\n\
-exec mysqld_safe --init-file=/docker-entrypoint-initdb.d/init-db.sql' > /entrypoint.sh && \
-    chmod +x /entrypoint.sh
+# Copio al container el script de arranque
+COPY tools/entrypoint.sh /entrypoint.sh
+
+# Le doy permisos de ejecucion al script
+RUN chmod +x /entrypoint.sh
 
 EXPOSE 3306
+
 ENTRYPOINT ["/entrypoint.sh"]
 

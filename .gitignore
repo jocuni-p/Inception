@@ -17,9 +17,9 @@ docker-compose.override.yml
 
 # === Environment and secrets ===
 #.env
-.env.*
-*secrets/
-**/secrets*
+#.env.*
+#*secrets/
+#**/secrets*
 credentials.*
 *.pem
 *.key

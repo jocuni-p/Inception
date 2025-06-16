@@ -113,16 +113,12 @@ status:
 #	@docker volume ls --filter "name=inception_"
 	@docker volume ls
 	@echo "\n------ Persistent Volumes ------"
-		@echo "PATH				STATUS"
+		@echo "DRIVER	VOLUME NAME"
 	@if [ -d "$(DB_DIR)" ]; then \
-		echo "$(DB_DIR)	EXISTS"; \
-	else \
-		echo "$(DB_DIR)	does NOT exist."; \
+		echo "host	$(DB_DIR)"; \
 	fi
 	@if [ -d "$(WP_DIR)" ]; then \
-		echo "$(WP_DIR) 	EXISTS\n"; \
-	else \
-		echo "$(WP_DIR)	does NOT exist.\n"; \
+		echo "host	$(WP_DIR)\n"; \
 	fi
 	@echo "\n---------- Disk Usage ----------"
 	@docker system df
@@ -138,13 +134,7 @@ fclean: clean
 		sudo rm -rf $(MYDATA_DIR); \
 	else \
 		echo "[FCLEAN] No persistent data directory found at $(MYDATA_DIR)."; \
-	fi
-#	@if [ -d "$(DB_DIR)" ] || [ -d "$(WP_DIR)" ]; then \
-    		echo "[FCLEAN] 🧹Attempting to remove DB and WP persistent volumes with sudo..."; \
-    		sudo rm -rf $(DB_DIR) $(WP_DIR); \
-	else \
-    		echo "[FCLEAN] No volume directories found to delete."; \
-	fi
+	f
 	@-docker volume rm inception_db_vol inception_wp_vol 2>/dev/null || true
 #	'-' al inicio, ignora errores en los comandos criticos
 	@echo "[FCLEAN] Removed intern volumes succesfully."
@@ -153,10 +143,8 @@ fclean: clean
 	@echo "[FCLEAN] Removing SSL certificates"
 	@-rm -rf $(SSL_DIR) 2>/dev/null || true
 	@docker builder prune
-	@echo "[FCLEAN]🧹🧹🧹 Removed images' build CACHE."
-#	--rmi all: elimina todas las imágenes asociadas al proyecto, incluido cache
-#	--volumes: borra los volúmenes anónimos creados por docker-compose (no afecta a db_vol y wp_vol).
-#	--remove-orphans: elimina contenedores sueltos que comparten la misma red del proyecto.
+	@echo "[FCLEAN]🧹🧹🧹 Removed ALL build CACHE."
+
 
 re: fclean all status
 
@@ -172,3 +160,33 @@ help:
 	@echo "make re           Cleanup everything and Rebuild"
 
 .PHONY: all setup build down status clean fclean re help
+
+verify-db:
+	@echo "\n🔍 Verifying MariaDB secrets and database setup..."
+	@container=$$(docker ps --filter "name=inception-mariadb" --format "{{.Names}}"); \
+	if [ -z "$$container" ]; then \
+		echo "❌ MariaDB container is not running."; \
+		exit 1; \
+	fi; \
+	echo "✅ Found container: $$container"; \
+	echo "📁 Checking mounted secrets..."; \
+	docker exec -i $$container bash -c ' \
+		for file in db_user db_password db_root_password; do \
+			if [ ! -f /run/secrets/$$file ]; then \
+				echo "❌ Missing /run/secrets/$$file"; \
+				exit 1; \
+			else \
+				echo "✅ /run/secrets/$$file found"; \
+			fi; \
+		done'; \
+	echo "📜 Checking init-db.sql content..."; \
+	docker exec -i $$container grep -q "$$(cat secrets/db_user.txt)" /docker-entrypoint-initdb.d/init-db.sql && \
+		echo "✅ User exists in init-db.sql" || \
+		{ echo "❌ User not found in init-db.sql"; exit 1; }; \
+	echo "🔐 Attempting MySQL login as WordPress user..."; \
+	password=$$(cat secrets/db_password.txt); \
+	user=$$(cat secrets/db_user.txt); \
+	docker exec -i $$container mysql -u $$user -p$$password -e "SHOW DATABASES;" >/dev/null 2>&1 && \
+		echo "✅ Login successful as $$user" || \
+		echo "❌ Failed to login with provided credentials"
+
