@@ -10,11 +10,21 @@
 #                                                                              #
 # **************************************************************************** #
 
-# NOTA: Desde Makefile creo un certificado ssl que se guarda en el directorio
-# del proyeco Inception y a traves del Dockerfile lo copio dentro del container.
-# Se crearan 2 volumenes que estaran mapeados al directorio '~/mydata' del host
+
+# ATENCION: PONER ESTAS NOTAS EN EL README
+# DOMINIO: Dado que el dominio '$(USER).42.fr' no esta registrado como tal y no 
+#  encontrara su IP en las DNS de la red, dentro del archivo '/etc/hosts' del 
+#  sistema Debian asociare (previo a la evaluacion) la IP del localhost (127.0.0.1) 
+#  a ese dominio. De este modo lo reconocera como valido y obtendra la IP 127.0.0.1
+#  -----------------------------
+# SSL: NGINX necesita un certificado SSL para proteger el tunel de comunicacion de HTTP.
+# Para el proyecto generare un certificado SSL autofirmado desde Makefile que se guarda
+# en el directorio del proyeco Inception y a traves del Dockerfile lo copio dentro del container.
+# ------------------------------
+# VOLUMEN PERSISTENTE: Se crearan 2 volumenes que estaran mapeados al directorio '~/mydata' del host
 # donde se guardara la informacion de forma persistente (independientemente del
-# estado de los containers). 
+# estado de los containers).
+#
 # ============= VARIABLES ============ #
 
 PROJECT = inception
