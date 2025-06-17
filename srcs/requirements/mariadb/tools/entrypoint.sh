@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Uso el 'envsubst' porque estoy usando un template SQL con variables ${...} y el archivo .sql no entiende las variables de shell.
+
 # termina el script inmediatamente si cualquier comando falla
 set -e
 # asigna los valores de 'secrets' montados en /run/secrets/ del container 
