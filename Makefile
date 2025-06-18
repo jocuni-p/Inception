@@ -16,13 +16,15 @@
 #  encontrara su IP en las DNS de la red, dentro del archivo '/etc/hosts' del 
 #  sistema Debian asociare (previo a la evaluacion) la IP del localhost (127.0.0.1) 
 #  a ese dominio. De este modo lo reconocera como valido y obtendra la IP 127.0.0.1
+# El archivo /etc/hosts es un archivo de configuración del sistema que asocia 
+# direcciones IP con nombres de dominio o "hostnames", funcionando como un mini DNS local.
 #  -----------------------------
 # SSL: NGINX necesita un certificado SSL para proteger el tunel de comunicacion de HTTP.
-# Para el proyecto generare un certificado SSL autofirmado desde Makefile que se guarda
-# en el directorio del proyeco Inception y a traves del Dockerfile lo copio dentro del container.
+# Para el proyecto generare un certificado SSL autofirmado desde Makefile que se guarda en 
+# el directorio del proyeco Inception y a traves del Dockerfile lo copio dentro del container.
 # ------------------------------
-# VOLUMEN PERSISTENTE: Se crearan 2 volumenes que estaran mapeados al directorio '~/mydata' del host
-# donde se guardara la informacion de forma persistente (independientemente del
+# VOLUMEN PERSISTENTE: Se crearan 2 volumenes que estaran mapeados al directorio '~/mydata' 
+# del host donde se guardara la informacion de forma persistente (independientemente del
 # estado de los containers).
 #
 # ============= VARIABLES ============ #
