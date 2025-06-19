@@ -3,10 +3,6 @@ services:
     build: ./requirements/mariadb
     env_file: .env # defino cual sera el archivo externo de las variables de entorno que se inyectaran al container
     restart: unless-stopped
-      #    secrets:
-      #      - db_user
-      #      - db_password
-      #      - db_root_password
     healthcheck: # verifica cada 5s si mariadb esta listo para aceptar conexiones (exit 0, sino exit 1)
       test: ["CMD-SHELL", "mysqladmin ping -h localhost -u $$MYSQL_USER --password=$$MYSQL_PASSWORD || exit 1"]
       interval: 5s
@@ -32,10 +28,13 @@ services:
       - wp_vol:/var/www/html
       - ../secrets/db_user.txt:/run/secrets/db_user:ro # read only
       - ../secrets/db_password.txt:/run/secrets/db_password:ro
+      - ../secrets/wp_admin_user.txt:/run/secrets/wp_admin_user:ro
+      - ../secrets/wp_admin_password.txt:/run/secrets/wp_admin_password:ro
+      - ../secrets/wp_admin_email.txt:/run/secrets/wp_admin_email:ro
+      - ../secrets/wp_user.txt:/run/secrets/wp_user:ro
+      - ../secrets/wp_user_password.txt:/run/secrets/wp_user_password:ro
+      - ../secrets/wp_user_email.txt:/run/secrets/wp_user_email:ro
 
-        #    secrets:
-        #      - db_user
-        #      - db_password
     networks:
       - inception
     depends_on: # solo controla el orden de inicio, no si su servicio interno ya esta 100% operativo.
@@ -74,11 +73,4 @@ volumes: # Montare carpetas reales del host usando 'bind' dentro del container
 networks:
   inception:
     driver: bridge
-      #Lo siguiente solo tiene efecto en modo Swarm
-      #secrets:
-      #  db_user:
-      #    file: ../secrets/db_user.txt
-      #  db_password:
-      #    file: ../secrets/db_password.txt
-      #  db_root_password:
-      #    file: ../secrets/db_root_password.txt
+

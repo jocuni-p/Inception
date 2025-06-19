@@ -6,7 +6,6 @@ RUN apt-get update && apt-get upgrade -y && \
 
 # Download the desired version of Wordpress in the desired folder, decompress it and remove the .tar file
 # create the folder to store tmp files(if not created)
-
 RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -O /usr/local/bin/wp \
 && chmod +x /usr/local/bin/wp
 
@@ -16,8 +15,8 @@ RUN mkdir -p /run/php \
 
 RUN wget https://wordpress.org/wordpress-6.7.2.tar.gz -P /var/www/html && \
 	cd /var/www/html && tar -xzf wordpress-6.7.2.tar.gz && rm wordpress-6.7.2.tar.gz
-# Give root rights to write in the wordpress folder and create the folder to store tmp files(if not created)
 
+# Give root rights to write in the wordpress folder and create the folder to store tmp files(if not created)
 RUN chown -R www-data:www-data /var/www/html/ \
     && chmod -R 755 /var/www/html/
 

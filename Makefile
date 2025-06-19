@@ -12,11 +12,10 @@
 
 
 # ATENCION: PONER ESTAS NOTAS EN EL README
-# DOMINIO: Dado que el dominio '$(USER).42.fr' no esta registrado como tal, no 
-#  encontraria su IP en las DNS de la red. El navegador primero tratara de buscar
-#  su IP dentro del archivo '/etc/hosts' del host. Por tanto, asocio la IP del
-#  localhost (127.0.0.1) a ese dominio. De este modo lo reconocera como valido y
-# obtendra la IP 127.0.0.1
+# DOMINIO: El navegador, antes de buscar la IP de '$(USER).42.fr' en las DNS de 
+# la red, primero mirara si esta en el archivo '/etc/hosts' del host. Por tanto,
+# asocio la IP del localhost (127.0.0.1) a ese dominio dentro de hosts. De este
+# modo lo reconocera como valido y obtendra la IP 127.0.0.1
 # El archivo /etc/hosts es un archivo de configuración del sistema que asocia 
 # direcciones IP con nombres de dominio o "hostnames", funcionando como un mini DNS local.
 #  -----------------------------------------------------------------------------
@@ -29,7 +28,7 @@
 #  containers. Ahi guardare la informacion persistente.
 #  -----------------------------------------------------------------------------
 #  SECRETS: En cada container monto unos secrets, que exporto a variables de entorno
-#  que aunque se repitan algunas no se ven entre containers. 
+#  que, aunque se repitan algunas, no se ven entre containers. 
 #
 # ============= VARIABLES ============ #
 
