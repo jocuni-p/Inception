@@ -27,6 +27,9 @@
 # VOLUMEN PERSISTENTE: creare el directorio ~/mydata en el host, que contendra 2 
 # directorios mapeados a los volumenes de los containers mariadb y wordpress de los
 #  containers. Ahi guardare la informacion persistente.
+#  -----------------------------------------------------------------------------
+#  SECRETS: En cada container monto unos secrets, que exporto a variables de entorno
+#  que aunque se repitan algunas no se ven entre containers. 
 #
 # ============= VARIABLES ============ #
 
