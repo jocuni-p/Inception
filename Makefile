@@ -12,20 +12,21 @@
 
 
 # ATENCION: PONER ESTAS NOTAS EN EL README
-# DOMINIO: Dado que el dominio '$(USER).42.fr' no esta registrado como tal y no 
-#  encontrara su IP en las DNS de la red, dentro del archivo '/etc/hosts' del 
-#  sistema Debian asociare (previo a la evaluacion) la IP del localhost (127.0.0.1) 
-#  a ese dominio. De este modo lo reconocera como valido y obtendra la IP 127.0.0.1
+# DOMINIO: Dado que el dominio '$(USER).42.fr' no esta registrado como tal, no 
+#  encontraria su IP en las DNS de la red. El navegador primero tratara de buscar
+#  su IP dentro del archivo '/etc/hosts' del host. Por tanto, asocio la IP del
+#  localhost (127.0.0.1) a ese dominio. De este modo lo reconocera como valido y
+# obtendra la IP 127.0.0.1
 # El archivo /etc/hosts es un archivo de configuración del sistema que asocia 
 # direcciones IP con nombres de dominio o "hostnames", funcionando como un mini DNS local.
-#  -----------------------------
+#  -----------------------------------------------------------------------------
 # SSL: NGINX necesita un certificado SSL para proteger el tunel de comunicacion de HTTP.
 # Para el proyecto generare un certificado SSL autofirmado desde Makefile que se guarda en 
 # el directorio del proyeco Inception y a traves del Dockerfile lo copio dentro del container.
-# ------------------------------
-# VOLUMEN PERSISTENTE: Se crearan 2 volumenes que estaran mapeados al directorio '~/mydata' 
-# del host donde se guardara la informacion de forma persistente (independientemente del
-# estado de los containers).
+# ------------------------------------------------------------------------------
+# VOLUMEN PERSISTENTE: creare el directorio ~/mydata en el host, que contendra 2 
+# directorios mapeados a los volumenes de los containers mariadb y wordpress de los
+#  containers. Ahi guardare la informacion persistente.
 #
 # ============= VARIABLES ============ #
 
@@ -167,7 +168,7 @@ help:
 	@echo "make all          Build and start all services (alias for make build)"
 	@echo "make certs        Generate SSL certificates only"
 	@echo "make status       Show all containers' info"
-	@echo "make clean         Stop & Remove containers and network (like 'docker-compose down')"
+	@echo "make clean        Stop & Remove containers and network ('docker-compose down')"
 	@echo "make fclean       Full cleanup (containers, network, images, ALL volumes, ssl certs, ALL images cache)"
 	@echo "make re           Cleanup everything and Rebuild"
 
