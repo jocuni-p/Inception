@@ -27,8 +27,9 @@
 # directorios mapeados a los volumenes de los containers mariadb y wordpress de los
 #  containers. Ahi guardare la informacion persistente.
 #  -----------------------------------------------------------------------------
-#  SECRETS: En cada container monto unos secrets, que exporto a variables de entorno
-#  que, aunque se repitan algunas, no se ven entre containers. 
+# SECRETS: En cada container monto algunos secrets desde el host a dentro del contenedor 
+# y luego los exporto como variables de entorno de ese container. Cada container tiene
+# su copia en memoria del .env externo y no ve los .env de los otros containers.
 #
 # ============= VARIABLES ============ #
 
@@ -151,7 +152,7 @@ fclean: clean
 		echo "[FCLEAN] No persistent data directory found at $(MYDATA_DIR)."; \
 	fi
 	@-docker volume rm inception_db_vol inception_wp_vol 2>/dev/null || true
-#	'-' al inicio, ignora errores en los comandos criticos
+#	'-' al inicio: ignora errores en los comandos criticos
 	@echo "[FCLEAN] Removed intern volumes succesfully."
 	@echo "[FCLEAN] Removing ALL project resources"
 	@$(COMPOSE) down --rmi all --volumes --remove-orphans

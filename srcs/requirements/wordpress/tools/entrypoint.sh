@@ -14,16 +14,21 @@ export WP_USER_PASSWORD=$(cat /run/secrets/wp_user_password)
 export WP_USER_EMAIL=$(cat /run/secrets/wp_user_email)
 
 # Waiting for MariaDB. Aseguro que mariadb esta lista y acepta solicitudes
+# Va ejecutando 'SELECT 1' contra el host mariadb hasta que no falle (significa que esta listo)  
 echo "Waiting for MariaDB to be ready..."
 until mysql -h mariadb -u ${MYSQL_USER} -p${MYSQL_PASSWORD} -e "SELECT 1" >/dev/null 2>&1; do
     sleep 2
 done
 echo "MariaDB is ready."
 
-# Check for folder's permissions
+# Cambia el propietario del directorio donde se instala 
+# WordPress a www-data (el usuario bajo el que corre PHP-FPM).
+# Asegura que WordPress pueda leer/escribir correctamente.
 chown -R www-data:www-data /var/www/html
 
-# If WordPress is not installed we'll install it
+# Install WordPress (if needed) and create and set users
+# Usa wp-cli para descargar los archivos base de Wordpress
+# --allow-root: evita errores si se ejecuta como root (necesario en contenedores).
 if [ ! -f "/var/www/html/wordpress/wp-config.php" ]; then
     echo "Downloading WordPress..."
     wp core download --allow-root
@@ -66,9 +71,10 @@ else
     echo "WordPress already installed."
 fi
 
-# Set up permissions again
+# Seteo de nuevo los permisos del directorio para asegurar que los 
+# nuevos archivos anyadidos tengan el propietario correcto
 chown -R www-data:www-data /var/www/html
 
-# Start PHP-FPM in foreground mode
+# Lanza PHP-FPM en primer plano (-F) para que el contenedor no se detenga
 exec php-fpm7.4 -F
 

@@ -26,3 +26,11 @@
 # .git
 # .gitignore
 
+# a la hora de construir la imagen se ignorara todo excepto:
+# archivo Dockerfile
+# directorio conf y su contenido
+# directorio tools y su contenido
+
+*
+!Dockerfile
+!conf/

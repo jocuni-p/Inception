@@ -1,3 +1,13 @@
+# [mysqld]: indica a quien se aplican las configuraciones que le siguen. En este caso al
+# proceso principal (deamon) del MariaDB. 
+# user: El servicio MariaDB corre con el usuario del sistema mysql.
+# socket: Ubicación del socket UNIX local. Es un tipo de archivo especial 
+# que permite que los programas se comuniquen entre sí dentro del mismo 
+# sistema operativo, sin usar la red.
+# port: Puerto en el que escucha conexiones TCP.
+# datadir: Carpeta donde se almacenan los datos de las bases de datos.
+# bind_address: Permite conexiones desde cualquier IP (dentro de la red Docker, en este caso)
+
 [mysqld]
 	user = mysql
 	socket  = /run/mysqld/mysqld.sock
