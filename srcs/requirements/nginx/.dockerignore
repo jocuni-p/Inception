@@ -2,6 +2,7 @@
 # archivo Dockerfile
 # directorio conf y su contenido
 
+
 *
 !Dockerfile
-!tools/
+!conf/

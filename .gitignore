@@ -5,7 +5,7 @@
 *.DS_Store
 
 # === Docker-related ===
-**/.dockerignore
+# **/.dockerignore
 docker-compose.override.yml
 
 # === Build artifacts ===
