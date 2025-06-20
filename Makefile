@@ -10,25 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-DOMINIO: El navegador, antes de buscar la IP de '$(USER).42.fr' en las DNS de 
-la red, primero mirara si esta en el archivo '/etc/hosts' del host. Por tanto,
-asocio la IP del localhost (127.0.0.1) a ese dominio dentro de hosts. De este
-modo lo reconocera como valido y obtendra la IP 127.0.0.1
-El archivo /etc/hosts es un archivo de configuración del sistema que asocia 
-direcciones IP con nombres de dominio o "hostnames", funcionando como un mini DNS local.
- -----------------------------------------------------------------------------
-SSL: NGINX necesita un certificado SSL para proteger el tunel de comunicacion de HTTP.
-Para el proyecto generare un certificado SSL autofirmado desde Makefile que se guarda en 
-el directorio del proyeco Inception y a traves del Dockerfile lo copio dentro del container.
-------------------------------------------------------------------------------
-VOLUMEN PERSISTENTE: creare el directorio ~/mydata en el host, que contendra 2 
-directorios mapeados a los volumenes de los containers mariadb y wordpress de los
- containers. Ahi guardare la informacion persistente.
- -----------------------------------------------------------------------------
-SECRETS: En cada container monto algunos secrets desde el host a dentro del contenedor 
-y luego los exporto como variables de entorno de ese container. Cada container tiene
-su copia en memoria del .env externo y no ve los .env de los otros containers.
-#
+
 # ============= VARIABLES ============ #
 
 PROJECT = inception
@@ -47,7 +29,7 @@ SSL_CRT = $(SSL_DIR)/nginx.crt
 # NGINX necesita un certificado SSL para proteger el tunel de comunicacion de HTTP.
 # Para el proyecto generare un certificado SSL autofirmado.
 
-# # Asegura que el directorio para los certificados exista antes de generarlos, sino lo crea
+# Asegura que el directorio para los certificados exista antes de generarlos, sino lo crea
 $(SSL_DIR):
 	@echo "[SSL] Creating SSL directory structure"
 	@mkdir -p $@
