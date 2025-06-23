@@ -14,7 +14,7 @@ export WP_USER_PASSWORD=$(cat /run/secrets/wp_user_password)
 export WP_USER_EMAIL=$(cat /run/secrets/wp_user_email)
 
 # Waiting for MariaDB. Aseguro que mariadb esta lista y acepta solicitudes
-# Va ejecutando 'SELECT 1' contra el host mariadb hasta que no falle (significa que esta listo)  
+# Va ejecutando en bucle 'SELECT 1' contra el host mariadb hasta que no falle (significa que esta listo)  
 echo "Waiting for MariaDB to be ready..."
 until mysql -h mariadb -u ${MYSQL_USER} -p${MYSQL_PASSWORD} -e "SELECT 1" >/dev/null 2>&1; do
     sleep 2
@@ -22,11 +22,18 @@ done
 echo "MariaDB is ready."
 
 # Cambia el propietario del directorio donde se instala 
-# WordPress a www-data (el usuario bajo el que corre PHP-FPM).
+# WordPress a www-data (usuario bajo el que corre PHP-FPM)
+# para que sea accesible por PHP-FPM.
 # Asegura que WordPress pueda leer/escribir correctamente.
 chown -R www-data:www-data /var/www/html
 
-# Install WordPress (if needed) and create and set users
+# Install WordPress (if needed) and create and set users:
+# -Descarga WordPress
+# -Crea wp-config.php con la conexion a la base de datos
+# -Instala WordPress con titulo, admin, etc.
+# -Crea un segundo usuario con rol de autor
+# -Configura opciones como zona horaria, estructura de urls, comentarios, etc.
+# Esto autmatiza completamente la instalacion sin intervencion manual.
 # Usa wp-cli para descargar los archivos base de Wordpress
 # --allow-root: evita errores si se ejecuta como root (necesario en contenedores).
 if [ ! -f "/var/www/html/wordpress/wp-config.php" ]; then
@@ -63,8 +70,10 @@ if [ ! -f "/var/www/html/wordpress/wp-config.php" ]; then
     wp option update date_format "d/m/Y" --allow-root
     wp option update time_format "H:i" --allow-root
     wp option update permalink_structure "/%postname%/" --allow-root
-    wp option update default_comment_status "closed" --allow-root
-    wp option update default_ping_status "closed" --allow-root
+    wp option update default_comment_status "open" --allow-root
+    wp option update default_ping_status "open" --allow-root
+    wp post create --post_title="Test Post" --post_content="Esto es un post de prueba." --post_status=publish --allow-root
+
 
     echo "WordPress installed and configured successfully!"
 else
@@ -76,5 +85,6 @@ fi
 chown -R www-data:www-data /var/www/html
 
 # Lanza PHP-FPM en primer plano (-F) para que el contenedor no se detenga
+# al usar exec reemplaza el shell actual
 exec php-fpm7.4 -F
 
