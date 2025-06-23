@@ -21,7 +21,7 @@ services:
   wordpress:
     build: ./requirements/wordpress
     env_file: .env
-    restart: on-failure # si el container de mariadb no esta ya operativo, el de wordpress se reinicia 
+    restart: unless-stopped 
     expose:
       - "9000"
     volumes:
@@ -44,7 +44,7 @@ services:
   nginx:
     build: ./requirements/nginx
     env_file: .env # solo si voy a necesitar alguna variable de env
-    restart: on-failure # si su dependencia no esta levantada y lista, nginx se reinicia
+    restart: unless-stopped
     ports:
       - "443:443" # El puerto del contenedor se mapea al del host (HOST_PORT:CONTAINER_PORT)
     volumes:
