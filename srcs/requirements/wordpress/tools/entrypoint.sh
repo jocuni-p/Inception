@@ -71,6 +71,8 @@ if [ ! -f "/var/www/html/wordpress/wp-config.php" ]; then
     wp option update time_format "H:i" --allow-root
     wp option update permalink_structure "/%postname%/" --allow-root
     wp option update default_comment_status "open" --allow-root
+    wp option update comment_moderation "0" --allow-root
+    wp option update comment_previously_approved "0" --allow-root
     wp option update default_ping_status "open" --allow-root
     wp post create --post_title="Test Post" --post_content="Esto es un post de prueba." --post_status=publish --allow-root
 
