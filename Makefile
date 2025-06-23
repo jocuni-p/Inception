@@ -64,12 +64,12 @@ certs: $(SSL_KEY) $(SSL_CRT)
 
 all: build
 
-# Crea los certificados, los volumenes locales y comprueba si mi dominio esta en /etc/hosts
+# Crea los certificados, los volumenes locales persistentes y comprueba si mi dominio esta en /etc/hosts
 setup: certs
-	@echo "[SETUP] 🛠️  Initializing project environment for $(DOMAIN)"
 	@echo "[SETUP] Creating local volume directories in $(MYDATA_DIR)"
 	@mkdir -p $(DB_DIR) $(WP_DIR)
 	@chmod 755 $(MYDATA_DIR)
+	@echo "[SETUP] 🛠️  Initializing project environment for $(DOMAIN)"
 	@if ! grep -q "$(DOMAIN)" /etc/hosts; then \
 		echo ""; \
 		echo "⚠️  Warning: Domain '$(DOMAIN)' not found in /etc/hosts ⚠️"; \

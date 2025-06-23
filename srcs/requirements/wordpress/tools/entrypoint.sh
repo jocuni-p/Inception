@@ -57,7 +57,7 @@ if [ ! -f "/var/www/html/wordpress/wp-config.php" ]; then
         --user_pass=${WP_USER_PASSWORD}
 
     echo "Additional configuration..."
-    wp option update blogdescription "My first WordPress site using Docker" --allow-root
+    wp option update blogdescription "Mi primer sitio wordpress usando Docker :)" --allow-root
     wp rewrite structure '/%postname%/' --allow-root
     wp option update timezone_string "Europe/Madrid" --allow-root
     wp option update date_format "d/m/Y" --allow-root
