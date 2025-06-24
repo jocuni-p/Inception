@@ -29,5 +29,8 @@ RUN chmod +x /entrypoint.sh
 
 EXPOSE 3306
 
+HEALTHCHECK --interval=10s --timeout=5s --start-period=20s --retries=3 \
+  CMD-SHELL "mysqladmin ping -h localhost -u root --password=$(cat /run/secrets/db_root_password) || exit 1"
+
 ENTRYPOINT ["/entrypoint.sh"]
 

@@ -4,12 +4,24 @@
 
 # termina el script inmediatamente si cualquier comando falla
 set -e
-# asigna los valores de 'secrets' montados en /run/secrets/ del container 
-# a las variables de entorno que MYSQL usara durante la inicilaizacion 
+
+echo "[Entrypoint] Reading secrets..."
 export MYSQL_USER=$(cat /run/secrets/db_user)
 export MYSQL_PASSWORD=$(cat /run/secrets/db_password)
 export MYSQL_ROOT_PASSWORD=$(cat /run/secrets/db_root_password)
-# reemplaza las placeholders de la plantilla por los valores reales de las variables exportadas y lo guarda en init-db.sql 
+# export MYSQL_DATABASE=${MYSQL_DATABASE}
+
+echo "[Entrypoint] Preparing init script with envsubst..."
 envsubst < /docker-entrypoint-initdb.d/init-db.template > /docker-entrypoint-initdb.d/init-db.sql
-# ejecuta el archivo init generado, iniciandose MySQL
-exec mysqld_safe --init-file=/docker-entrypoint-initdb.d/init-db.sql
+
+if [ ! -d "/var/lib/mysql/mysql" ]; then
+    echo "[Entrypoint] First time setup - initializing DB"
+    chown -R mysql:mysql /var/lib/mysql
+    mysqld --user=mysql --bootstrap < /docker-entrypoint-initdb.d/init-db.sql
+else
+    echo "[Entrypoint] Existing database found, skipping init"
+fi
+
+echo "[Entrypoint] Starting MariaDB normally"
+exec mysqld_safe
+

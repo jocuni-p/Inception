@@ -1,10 +1,10 @@
 -- Script en lenguage SQL que crea base de datos, usuarios y permisos, usando variables del .env
 
-CREATE DATABASE IF NOT EXISTS `${MYSQL_DATABASE}`;
+CREATE DATABASE IF NOT EXISTS '${MYSQL_DATABASE}';
 
 -- User for WordPress
 CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
-GRANT ALL PRIVILEGES ON `${MYSQL_DATABASE}`.* TO '${MYSQL_USER}'@'%';
+GRANT ALL PRIVILEGES ON '${MYSQL_DATABASE}'.* TO '${MYSQL_USER}'@'%';
 
 -- Root setting up
 CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
