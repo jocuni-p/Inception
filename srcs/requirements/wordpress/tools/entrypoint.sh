@@ -22,6 +22,10 @@ export WP_USER=$(< /run/secrets/wp_user)
 export WP_USER_PASSWORD=$(< /run/secrets/wp_user_password)
 export WP_USER_EMAIL=$(< /run/secrets/wp_user_email)
 
+# Recargo las variables del .env por si este script no las viese 
+export DOMAIN_NAME=${DOMAIN_NAME}
+export MYSQL_DATABASE=${MYSQL_DATABASE}
+
 # Directorio donde se instalará WordPress
 WP_PATH="/var/www/html/wordpress"
 
@@ -42,7 +46,7 @@ if [ ! -f "$WP_PATH/wp-config.php" ]; then
     echo "Installing WordPress..."
     wp core install \
         --path="$WP_PATH" \
-        --url=https://localhost \
+        --url="https://${DOMAIN_NAME}" \
         --title="$WP_TITLE" \
         --admin_user="$WP_ADMIN_USER" \
         --admin_password="$WP_ADMIN_PASSWORD" \
@@ -68,6 +72,8 @@ if [ ! -f "$WP_PATH/wp-config.php" ]; then
     wp option update comment_previously_approved "0" --path="$WP_PATH" --allow-root
     wp option update default_ping_status "open" --path="$WP_PATH" --allow-root
     echo "WordPress installed and configured successfully!"
+    # Asegurar permisos correctos
+    chown -R www-data:www-data "$WP_PATH"
 else
     echo "WordPress already installed. Skipping setup."
 fi

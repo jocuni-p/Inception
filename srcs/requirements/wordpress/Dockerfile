@@ -3,7 +3,7 @@ FROM debian:bullseye
 # Update and upgrade apt and install required packages
 RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y vim curl wget php7.4 php7.4-fpm php7.4-mysql mariadb-client && \
-    apt-get clean && rm -rf /var /lib/apt/lists/*
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install WP-CLI globally
 RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -O /usr/local/bin/wp && \
