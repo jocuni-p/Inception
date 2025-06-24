@@ -2,7 +2,7 @@ services:
   mariadb:
     build: ./requirements/mariadb
     env_file: .env # defino cual sera el archivo externo de las variables de entorno que se inyectaran al container
-    restart: unless-stopped
+    restart: always
     healthcheck: # verifica cada 5s si mariadb esta listo para aceptar conexiones (exit 0, sino exit 1)
       test: ["CMD-SHELL", "mysqladmin ping -h localhost -u $$MYSQL_USER --password=$$MYSQL_PASSWORD || exit 1"]
       interval: 5s
@@ -21,7 +21,12 @@ services:
   wordpress:
     build: ./requirements/wordpress
     env_file: .env
-    restart: unless-stopped 
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000"] # o un script personalizado
+      interval: 10s
+      timeout: 5s
+      retries: 5 
     expose:
       - "9000"
     volumes:
@@ -34,7 +39,6 @@ services:
       - ../secrets/wp_user.txt:/run/secrets/wp_user:ro
       - ../secrets/wp_user_password.txt:/run/secrets/wp_user_password:ro
       - ../secrets/wp_user_email.txt:/run/secrets/wp_user_email:ro
-
     networks:
       - inception
     depends_on: # solo controla el orden de inicio, no si su servicio interno ya esta 100% operativo.
@@ -44,7 +48,7 @@ services:
   nginx:
     build: ./requirements/nginx
     env_file: .env # solo si voy a necesitar alguna variable de env
-    restart: unless-stopped
+    restart: always
     ports:
       - "443:443" # El puerto del contenedor se mapea al del host (HOST_PORT:CONTAINER_PORT)
     volumes:

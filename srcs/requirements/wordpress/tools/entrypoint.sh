@@ -3,90 +3,75 @@
 # termina el script inmediatamente si cualquier comando falla
 set -e
 
-# Exporto los secretos al .env ANTES de usarlos
-export MYSQL_USER=$(cat /run/secrets/db_user)
-export MYSQL_PASSWORD=$(cat /run/secrets/db_password)
-export WP_ADMIN_USER=$(cat /run/secrets/wp_admin_user)
-export WP_ADMIN_PASSWORD=$(cat /run/secrets/wp_admin_password)
-export WP_ADMIN_EMAIL=$(cat /run/secrets/wp_admin_email)
-export WP_USER=$(cat /run/secrets/wp_user)
-export WP_USER_PASSWORD=$(cat /run/secrets/wp_user_password)
-export WP_USER_EMAIL=$(cat /run/secrets/wp_user_email)
-
-# Waiting for MariaDB. Aseguro que mariadb esta lista y acepta solicitudes
-# Va ejecutando en bucle 'SELECT 1' contra el host mariadb hasta que no falle (significa que esta listo)  
+# Aseguro que mariadb esta lista
 echo "Waiting for MariaDB to be ready..."
-until mysql -h mariadb -u ${MYSQL_USER} -p${MYSQL_PASSWORD} -e "SELECT 1" >/dev/null 2>&1; do
-    sleep 2
+until mysqladmin ping -h mariadb --silent; do
+    sleep 3
 done
 echo "MariaDB is ready."
 
-# Cambia el propietario del directorio donde se instala 
-# WordPress a www-data (usuario bajo el que corre PHP-FPM)
-# para que sea accesible por PHP-FPM.
-# Asegura que WordPress pueda leer/escribir correctamente.
-chown -R www-data:www-data /var/www/html
+# Cargar secretos desde archivos montados
+export MYSQL_USER=$(< /run/secrets/db_user)
+export MYSQL_PASSWORD=$(< /run/secrets/db_password)
 
-# Install WordPress (if needed) and create and set users:
-# -Descarga WordPress
-# -Crea wp-config.php con la conexion a la base de datos
-# -Instala WordPress con titulo, admin, etc.
-# -Crea un segundo usuario con rol de autor
-# -Configura opciones como zona horaria, estructura de urls, comentarios, etc.
-# Esto autmatiza completamente la instalacion sin intervencion manual.
-# Usa wp-cli para descargar los archivos base de Wordpress
-# --allow-root: evita errores si se ejecuta como root (necesario en contenedores).
-if [ ! -f "/var/www/html/wordpress/wp-config.php" ]; then
+export WP_ADMIN_USER=$(< /run/secrets/wp_admin_user)
+export WP_ADMIN_PASSWORD=$(< /run/secrets/wp_admin_password)
+export WP_ADMIN_EMAIL=$(< /run/secrets/wp_admin_email)
+
+export WP_USER=$(< /run/secrets/wp_user)
+export WP_USER_PASSWORD=$(< /run/secrets/wp_user_password)
+export WP_USER_EMAIL=$(< /run/secrets/wp_user_email)
+
+# Directorio donde se instalará WordPress
+WP_PATH="/var/www/html/wordpress"
+
+# Instala WoerdPress si no existe ya
+if [ ! -f "$WP_PATH/wp-config.php" ]; then
     echo "Downloading WordPress..."
-    wp core download --allow-root
+    wp core download --path="$WP_PATH" --allow-root
 
     echo "Creating configuration file for WordPress..."
-    wp config create --allow-root \
-        --dbname=${MYSQL_DATABASE} \
-        --dbuser=${MYSQL_USER} \
-        --dbpass=${MYSQL_PASSWORD} \
+    wp config create \
+        --path="$WP_PATH" \
+        --dbname="$MYSQL_DATABASE" \
+        --dbuser="$MYSQL_USER" \
+        --dbpass="$MYSQL_PASSWORD" \
         --dbhost=mariadb \
-        --path=/var/www/html
+        --allow-root
 
     echo "Installing WordPress..."
-    wp core install --allow-root \
-        --url="https://${DOMAIN_NAME}" \
-        --title="${WP_TITLE}" \
-        --admin_user="${WP_ADMIN_USER}" \
-        --admin_password="${WP_ADMIN_PASSWORD}" \
-        --admin_email="${WP_ADMIN_EMAIL}"
+    wp core install \
+        --path="$WP_PATH" \
+        --url=https://localhost \
+        --title="$WP_TITLE" \
+        --admin_user="$WP_ADMIN_USER" \
+        --admin_password="$WP_ADMIN_PASSWORD" \
+        --admin_email="$WP_ADMIN_EMAIL" \
+        --allow-root
 
     echo "Creating additional user..."
-    wp user create --allow-root \
-        ${WP_USER} \
-        ${WP_USER_EMAIL} \
+    wp user create "$WP_USER" "$WP_USER_EMAIL" \
+        --user_pass="$WP_USER_PASSWORD" \
         --role=author \
-        --user_pass=${WP_USER_PASSWORD}
+        --path="$WP_PATH" \
+        --allow-root
 
     echo "Additional configuration..."
-    wp option update blogdescription "Mi primer sitio wordpress usando Docker :)" --allow-root
-    wp rewrite structure '/%postname%/' --allow-root
-    wp option update timezone_string "Europe/Madrid" --allow-root
-    wp option update date_format "d/m/Y" --allow-root
-    wp option update time_format "H:i" --allow-root
-    wp option update permalink_structure "/%postname%/" --allow-root
-    wp option update default_comment_status "open" --allow-root
-    wp option update comment_moderation "0" --allow-root
-    wp option update comment_previously_approved "0" --allow-root
-    wp option update default_ping_status "open" --allow-root
-    wp post create --post_title="Test Post" --post_content="Esto es un post de prueba." --post_status=publish --allow-root
-
-
+    wp option update blogdescription "Just another WordPress site" --path="$WP_PATH" --allow-root
+    wp rewrite structure '/%postname%/' --path="$WP_PATH" --allow-root
+    wp rewrite flush --path="$WP_PATH" --allow-root
+    wp option update timezone_string "Europe/Madrid" --path="$WP_PATH" --allow-root
+    wp option update date_format "d/m/Y" --path="$WP_PATH" --allow-root
+    wp option update time_format "H:i" --path="$WP_PATH" --allow-root
+    wp option update default_comment_status "open" --path="$WP_PATH" --allow-root
+    wp option update comment_moderation "0" --path="$WP_PATH" --allow-root
+    wp option update comment_previously_approved "0" --path="$WP_PATH" --allow-root
+    wp option update default_ping_status "open" --path="$WP_PATH" --allow-root
     echo "WordPress installed and configured successfully!"
 else
-    echo "WordPress already installed."
+    echo "WordPress already installed. Skipping setup."
 fi
 
-# Seteo de nuevo los permisos del directorio para asegurar que los 
-# nuevos archivos anyadidos tengan el propietario correcto
-chown -R www-data:www-data /var/www/html
-
-# Lanza PHP-FPM en primer plano (-F) para que el contenedor no se detenga
-# al usar exec reemplaza el shell actual
+# Iniciar PHP-FPM
 exec php-fpm7.4 -F
 
