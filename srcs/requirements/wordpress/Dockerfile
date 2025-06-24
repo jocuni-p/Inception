@@ -20,6 +20,11 @@ WORKDIR /var/www/html/
 COPY /tools/entrypoint.sh /tmp/entrypoint.sh
 RUN chmod +x /tmp/entrypoint.sh
 
+# Crea el directorio y el archivo para los logs y le da permisos de usuario php-fpm 
+RUN mkdir -p /var/log && \
+    touch /var/log/php7.4-fpm.log && \
+    chown -R www-data:www-data /var/log/php7.4-fpm.log
+
 # Expose PHP-FPM port
 EXPOSE 9000
 
