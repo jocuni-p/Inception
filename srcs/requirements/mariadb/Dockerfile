@@ -2,11 +2,13 @@ FROM debian:bullseye
 
 # Install MariaDB and all the necessary things to make it work.
 # gettext: paquete que contiene la herramienta 'envsubst', que sustituye variables del .env en archivos.
+# Instalo bash para poder lanzar el comando shell del HEALTCHECK del final
 # We also delete temporary files to make it lighter
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y mariadb-server gettext && \
+    apt-get install -y mariadb-server gettext bash && \
     rm -rf /var/lib/apt/lists/* && \
     mkdir -p /docker-entrypoint-initdb.d
+
 
 # We create the folder where MariaDB will store its socket for local connections
 # We change permissions to give mysql access to it
@@ -29,8 +31,12 @@ RUN chmod +x /entrypoint.sh
 
 EXPOSE 3306
 
+#HEALTHCHECK --interval=10s --timeout=5s --start-period=20s --retries=3 \
+#  CMD-SHELL "mysqladmin ping -h localhost -u root --password=$(cat /run/secrets/db_root_password) || exit 1"
+# Esto marca el contenedor como 'healthy' o 'unhealthy' segun este funcionando y responda correctamente o no.
+# Usamos doble dólar ($$) para que Docker no lo interprete en tiempo de build
 HEALTHCHECK --interval=10s --timeout=5s --start-period=20s --retries=3 \
-  CMD-SHELL "mysqladmin ping -h localhost -u root --password=$(cat /run/secrets/db_root_password) || exit 1"
+  CMD bash -c 'mysqladmin ping -h localhost -u root --password="$$(cat /run/secrets/db_root_password)" || exit 1'
 
 ENTRYPOINT ["/entrypoint.sh"]
 
