@@ -27,9 +27,9 @@ export DOMAIN_NAME=${DOMAIN_NAME}
 export MYSQL_DATABASE=${MYSQL_DATABASE}
 
 # Directorio donde se instalará WordPress
-WP_PATH="/var/www/html/wordpress"
+WP_PATH="/var/www/html"
 
-# Instala WoerdPress si no existe ya
+# Instala WordPress si no existe ya
 if [ ! -f "$WP_PATH/wp-config.php" ]; then
     echo "Downloading WordPress..."
     wp core download --path="$WP_PATH" --allow-root
