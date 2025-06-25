@@ -119,6 +119,10 @@ status:
 	@echo "\n---------- Disk Usage ----------"
 	@docker system df
 
+# Creo un build (sin -d detached) para tener los contenedores en primer plano y ver los logs en consola
+debug:
+	@$(COMPOSE) up --build
+
 clean:
 	@$(COMPOSE) down
 	@echo "[CLEAN] Containers and network removed successfully (PERSISTENT DATA NOT AFECTED)"
