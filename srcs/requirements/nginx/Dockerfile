@@ -6,7 +6,8 @@ FROM debian:bullseye
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     nginx \
-    && rm -rf /var/lib/apt/lists/*
+	ca-certificates \
+	&& apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 	# Limpia la cache de paquetes y temporales no necesarios despues
 	# de la instalacion (aligera tamanyo de la imagen)
 
@@ -17,8 +18,7 @@ RUN mkdir -p /etc/nginx/ssl /var/www/html
 COPY conf/ssl/nginx.crt /etc/nginx/ssl/
 COPY conf/ssl/nginx.key /etc/nginx/ssl/
 
-# Copia los files de configuarcion
-# nginx.conf:la conf global de nginx y default.conf:la conf especifica de mi wordpress
+# Copia los files de configuarcion al container
 COPY ./conf/nginx.conf /etc/nginx/nginx.conf
 COPY ./conf/default.conf /etc/nginx/conf.d/default.conf
 

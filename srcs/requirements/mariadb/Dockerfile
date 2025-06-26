@@ -36,7 +36,7 @@ EXPOSE 3306
 # Esto marca el contenedor como 'healthy' o 'unhealthy' segun este funcionando y responda correctamente o no.
 # Usamos doble dólar ($$) para que Docker no lo interprete en tiempo de build
 HEALTHCHECK --interval=10s --timeout=5s --start-period=20s --retries=3 \
-  CMD bash -c 'mysqladmin ping -h localhost -u root --password="$$(cat /run/secrets/db_root_password)" || exit 1'
+ CMD bash -c 'mysqladmin ping -h localhost -u root --password="$$(cat /run/secrets/db_root_password)" || exit 1'
 
 ENTRYPOINT ["/entrypoint.sh"]
 

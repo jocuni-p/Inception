@@ -5,15 +5,18 @@
 # termina el script inmediatamente si cualquier comando falla
 set -e
 
+# Pongo los secrets que necesito en el .env 
 echo "[Entrypoint] Reading secrets..."
 export MYSQL_USER=$(cat /run/secrets/db_user)
 export MYSQL_PASSWORD=$(cat /run/secrets/db_password)
 export MYSQL_ROOT_PASSWORD=$(cat /run/secrets/db_root_password)
-# export MYSQL_DATABASE=${MYSQL_DATABASE}
+# export MYSQL_DATABASE=${MYSQL_DATABASE} EN TEORIA YA LA TIENE EL .env, NO HARIA FALTA
 
+# Sustituyo en el script de inicializacion los nombres de las variables del .env por sus valores
 echo "[Entrypoint] Preparing init script with envsubst..."
 envsubst < /docker-entrypoint-initdb.d/init-db.template > /docker-entrypoint-initdb.d/init-db.sql
 
+# Si no existe previamente, seteo e inicializo MariaDB. Si no existe, no reinicializo nada.
 if [ ! -d "/var/lib/mysql/mysql" ]; then
     echo "[Entrypoint] First time setup - initializing DB"
     chown -R mysql:mysql /var/lib/mysql
@@ -23,5 +26,5 @@ else
 fi
 
 echo "[Entrypoint] Starting MariaDB normally"
-exec mysqld_safe
-
+# exec mysqld_safe
+exec mysqld

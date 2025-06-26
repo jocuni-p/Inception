@@ -27,7 +27,7 @@ SSL_CRT = $(SSL_DIR)/nginx.crt
 # ============= SSL SETUP ============ #
 
 # NGINX necesita un certificado SSL para proteger el tunel de comunicacion de HTTP.
-# Para el proyecto generare un certificado SSL autofirmado.
+# Para poder hacer el proyecto generare un certificado SSL autofirmado (test para desarrollo)
 
 # Asegura que el directorio para los certificados exista antes de generarlos, sino lo crea
 $(SSL_DIR):
@@ -55,17 +55,18 @@ $(SSL_KEY) $(SSL_CRT): | $(SSL_DIR)
 		echo "[SSL] Using existing certificates"; \
 	fi
 
+
+# ============= MAIN RULES ============ #
+
+
+all: certs setup build
+
 # Genera el certificado
 # # Asegura que los archivos clave y certificado existan y estén listos.
 certs: $(SSL_KEY) $(SSL_CRT)
 
-
-# ============= MAIN RULES ============ #
-
-all: build
-
-# Crea los certificados, los volumenes locales persistentes y comprueba si mi dominio esta en /etc/hosts
-setup: certs
+# Crea e inicializa los volumenes locales persistentes y comprueba si el dominio esta en /etc/hosts
+setup: 
 	@echo "[SETUP] Creating local volume directories in $(MYDATA_DIR)"
 	@mkdir -p $(DB_DIR) $(WP_DIR)
 	@chmod 755 $(MYDATA_DIR)
@@ -80,7 +81,8 @@ setup: certs
 		echo "[SETUP] $(DOMAIN) already in /etc/hosts"; \
 	fi
 
-build: setup
+# Construye y levanta los containers en segundo plano (detached)
+build:
 	@echo "[BUILD] Building containers with TLS 1.3"
 	@$(COMPOSE) up -d --build
 #	Para que construya sin guardar las capas en la cache:
@@ -94,6 +96,7 @@ build: setup
 	@echo "• Help: make help"
 	@echo "============================================"
 
+# Da informacion general del estado del proyecto
 status:
 	@echo "\n📊 [STATUS] Checking services state"
 	@echo "----------- Images -------------"
@@ -119,7 +122,7 @@ status:
 	@echo "\n---------- Disk Usage ----------"
 	@docker system df
 
-# Creo un build (sin -d detached) para tener los contenedores en primer plano y ver los logs en consola
+# Lanzo un build (sin -d detached) para tener los contenedores en primer plano y ver los logs en consola
 debug:
 	@$(COMPOSE) up --build
 
@@ -128,7 +131,7 @@ clean:
 	@echo "[CLEAN] Containers and network removed successfully (PERSISTENT DATA NOT AFECTED)"
 
 fclean: clean
-#	Aseguro que los contenedores están detenidos y liberan los volúmenes antes de intentar eliminarlos.
+#	Aseguro que los contenedores están detenidos, liberan los volúmenes y los elimino.
 	@if [ -d "$(MYDATA_DIR)" ]; then \
 		echo "[FCLEAN] 🧹 Removing full persistent data directory $(MYDATA_DIR) with sudo..."; \
 		sudo rm -rf $(MYDATA_DIR); \
@@ -144,7 +147,6 @@ fclean: clean
 	@-rm -rf $(SSL_DIR) 2>/dev/null || true
 	@docker builder prune
 	@echo "[FCLEAN]🧹🧹🧹 Removed ALL build CACHE."
-
 
 re: fclean all status
 

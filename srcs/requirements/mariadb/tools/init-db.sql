@@ -1,8 +1,17 @@
--- Usuario de WordPress con acceso desde cualquier host
+-- Script en lenguage SQL que crea base de datos, usuarios y permisos, usando variables del .env
+
+-- Crear base de datos
+CREATE DATABASE IF NOT EXISTS `${MYSQL_DATABASE}`;
+
+-- Usuario de WordPress
 CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
 GRANT ALL PRIVILEGES ON `${MYSQL_DATABASE}`.* TO '${MYSQL_USER}'@'%';
 
--- Configuración de root
+-- Root
+CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
 ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
-FLUSH PRIVILEGES;
+ALTER USER 'root'@'%' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
 
+FLUSH PRIVILEGES;
