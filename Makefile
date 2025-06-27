@@ -62,7 +62,7 @@ $(SSL_KEY) $(SSL_CRT): | $(SSL_DIR)
 all: certs setup build
 
 # Genera el certificado
-# # Asegura que los archivos clave y certificado existan y estén listos.
+# # Asegura que los archivos 'key' y 'cert' existan y estén listos.
 certs: $(SSL_KEY) $(SSL_CRT)
 
 # Crea e inicializa los volumenes locales persistentes y comprueba si el dominio esta en /etc/hosts

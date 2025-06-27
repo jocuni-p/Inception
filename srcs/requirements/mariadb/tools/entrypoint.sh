@@ -17,13 +17,13 @@ echo "[Entrypoint] Preparing init script with envsubst..."
 envsubst < /docker-entrypoint-initdb.d/init-db.template > /docker-entrypoint-initdb.d/init-db.sql
 
 # Si no existe previamente, seteo e inicializo MariaDB. Si no existe, no reinicializo nada.
-if [ ! -d "/var/lib/mysql/mysql" ]; then
+#if [ ! -d "/var/lib/mysql/mysql" ]; then
     echo "[Entrypoint] First time setup - initializing DB"
     chown -R mysql:mysql /var/lib/mysql
-    mysqld --user=mysql --bootstrap < /docker-entrypoint-initdb.d/init-db.sql
-else
-    echo "[Entrypoint] Existing database found, skipping init"
-fi
+    mysqld --init-file=/docker-entrypoint-initdb.d/init-db.sql
+#else
+ #   echo "[Entrypoint] Existing database found, skipping init"
+#fi
 
 echo "[Entrypoint] Starting MariaDB normally"
 # exec mysqld_safe

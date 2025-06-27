@@ -21,7 +21,7 @@ services:
   wordpress:
     build: ./requirements/wordpress
     env_file: .env
-    restart: always
+    restart: no
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/wp-login.php"]
       interval: 10s
