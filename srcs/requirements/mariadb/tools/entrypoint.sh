@@ -12,7 +12,8 @@ export MYSQL_PASSWORD=$(cat /run/secrets/db_password)
 export MYSQL_ROOT_PASSWORD=$(cat /run/secrets/db_root_password)
 # export MYSQL_DATABASE=${MYSQL_DATABASE} EN TEORIA YA LA TIENE EL .env, NO HARIA FALTA
 
-# Sustituyo en el script de inicializacion los nombres de las variables del .env por sus valores
+# Sustituyo del template script de inicializacion los nombres de las variables
+# creando un nuevo init-db.sql con valores reales, porque SQL no entiende variables de shell
 echo "[Entrypoint] Preparing init script with envsubst..."
 envsubst < /docker-entrypoint-initdb.d/init-db.template > /docker-entrypoint-initdb.d/init-db.sql
 

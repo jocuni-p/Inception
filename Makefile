@@ -59,7 +59,7 @@ $(SSL_KEY) $(SSL_CRT): | $(SSL_DIR)
 # ============= MAIN RULES ============ #
 
 
-all: certs setup build
+all: certs setup build status
 
 # Genera el certificado
 # # Asegura que los archivos 'key' y 'cert' existan y estén listos.
@@ -85,9 +85,6 @@ setup:
 build:
 	@echo "[BUILD] Building containers with TLS 1.3"
 	@$(COMPOSE) up -d --build
-#	Para que construya sin guardar las capas en la cache:
-#	@$(COMPOSE) build --no-cache
-#	@$(COMPOSE) up -d
 	@echo "\n✅ [SUCCESS] Inception project is running!"
 	@echo "============================================"
 	@echo "• Access: https://$(DOMAIN)"
@@ -161,8 +158,7 @@ help:
 	@echo "make fclean       Full cleanup (containers, network, images, ALL volumes, ssl certs, ALL images cache)"
 	@echo "make re           Cleanup everything and Rebuild"
 
-.PHONY: all setup build down status clean fclean re help
-
+# ============ Testing ========== #
 verify-db:
 	@echo "\n🔍 Verifying MariaDB secrets and database setup..."
 	@container=$$(docker ps --filter "name=inception-mariadb" --format "{{.Names}}"); \
@@ -192,3 +188,46 @@ verify-db:
 		echo "✅ Login successful as $$user" || \
 		echo "❌ Failed to login with provided credentials"
 
+
+verify-wp:
+	@echo "\n🔍 Verifying WordPress container setup..."
+	@container=$$(docker ps --filter "name=inception-wordpress" --format "{{.Names}}"); \
+	if [ -z "$$container" ]; then \
+		echo "❌ WordPress container is not running."; \
+		exit 1; \
+	fi; \
+	echo "✅ Found container: $$container"; \
+	echo "📁 Checking mounted secrets..."; \
+	docker exec -i $$container bash -c ' \
+		for file in wp_user wp_password; do \
+			if [ ! -f /run/secrets/$$file ]; then \
+				echo "❌ Missing /run/secrets/$$file"; \
+				exit 1; \
+			else \
+				echo "✅ /run/secrets/$$file found"; \
+			fi; \
+		done'; \
+	echo "🌐 Verifying connection to MariaDB from WordPress..."; \
+	db_user=$$(cat secrets/db_user.txt); \
+	db_password=$$(cat secrets/db_password.txt); \
+	docker exec -i $$container bash -c ' \
+		mysql -h mariadb -u'$$db_user' -p'$$db_password' -e "SHOW DATABASES;"' >/dev/null 2>&1 && \
+		echo "✅ WordPress can connect to MariaDB" || \
+		echo "❌ WordPress failed to connect to MariaDB"
+
+
+verify-nginx:
+	@echo "\n🔍 Verifying Nginx container and WordPress site availability..."
+	@container=$$(docker ps --filter "name=inception-nginx" --format "{{.Names}}"); \
+	if [ -z "$$container" ]; then \
+		echo "❌ Nginx container is not running."; \
+		exit 1; \
+	fi; \
+	echo "✅ Found container: $$container"; \
+	echo "🌍 Attempting to curl WordPress home page via Nginx..."; \
+	curl -s -o /dev/null -w "%{http_code}" http://localhost | grep -qE "200|302" && \
+		echo "\n✅ WordPress site is accessible via Nginx" || \
+		echo "\n❌ Failed to access WordPress site through Nginx"
+
+
+.PHONY: all setup build down status clean fclean re help verify-db verify-wp verify-nginx
