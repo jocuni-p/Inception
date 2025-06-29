@@ -26,18 +26,17 @@ SSL_CRT = $(SSL_DIR)/nginx.crt
 
 # ============= SSL SETUP ============ #
 
-# NGINX necesita un certificado SSL para proteger el tunel de comunicacion de HTTP.
-# Para poder hacer el proyecto generare un certificado SSL autofirmado (test para desarrollo)
-
-# Asegura que el directorio para los certificados exista antes de generarlos, sino lo crea
+#	NGINX necesita un certificado SSL para proteger el tunel de comunicacion de HTTP.
+#	Para poder hacer el proyecto generare un certificado SSL autofirmado (test para desarrollo)
+#	Asegura que el directorio para los certificados exista antes de generarlos, sino lo crea
 $(SSL_DIR):
 	@echo "[SSL] Creating SSL directory structure"
 	@mkdir -p $@
 
-# Creara los 2 targets. 
-# El '|' verifica solo que exista la dependencia. No reconstruye si esta cambia.
-# Crea un certificado autofirmado, sin contrasenya, valido por 1 anyo, 
-# con la clave rsa de 2048 bits, rutas de salida y establece mi dominio como sujeto.
+#	Creara los 2 targets. 
+#	El '|' verifica solo que exista la dependencia. No reconstruye si esta cambia.
+#	Crea un certificado autofirmado, sin contrasenya, valido por 1 anyo, 
+#	con la clave rsa de 2048 bits, rutas de salida y establece mi dominio como sujeto.
 $(SSL_KEY) $(SSL_CRT): | $(SSL_DIR)
 	@if ! command -v openssl > /dev/null 2>&1; then \
         echo "Error: openssl is not installed."; \
@@ -58,13 +57,13 @@ $(SSL_KEY) $(SSL_CRT): | $(SSL_DIR)
 
 # ============= MAIN RULES ============ #
 
-	# Primera vez que arranco el proyecto
+#	Primera vez que arranco el proyecto
 all: certs setup build status
 
-	# Genera el certificado
+#	Genera el certificado
 certs: $(SSL_KEY) $(SSL_CRT)
 
-	# Crea e inicializa los volumenes locales persistentes y comprueba si el dominio esta en /etc/hosts
+#	Crea e inicializa los volumenes locales persistentes y comprueba si el dominio esta en /etc/hosts
 setup: 
 	@echo "[SETUP] Creating local volume directories in $(MYDATA_DIR)"
 	@mkdir -p $(DB_DIR) $(WP_DIR)
@@ -80,10 +79,10 @@ setup:
 		echo "[SETUP] $(DOMAIN) already in /etc/hosts"; \
 	fi
 
-	# Construye y levanta los containers en segundo plano (detached)
-	# up: Levanta los servicios definidos en el docker-compose.yml.
-	# --build: Reconstruye las imágenes Docker antes de iniciar los 
-	#  contenedores si hubo cambios en los Dockerfiles o dependencias.
+#	Construye y levanta los containers en segundo plano (detached)
+#	up: Levanta los servicios definidos en el docker-compose.yml.
+#	--build: Reconstruye las imágenes Docker antes de iniciar los 
+#	 contenedores si hubo cambios en los Dockerfiles o dependencias.
 build:
 	@echo "[BUILD] Building containers with TLS 1.3"
 	@$(COMPOSE) up -d --build
@@ -94,12 +93,12 @@ build:
 	@echo "============================================"
 
 
-	# Crea y levanta containers sin reconstruir las imagenes (util despues de un clean)
+#	 Crea y levanta containers sin reconstruir las imagenes (util despues de un clean)
 up:
 	@$(COMPOSE) up -d
 
 
-	# Detiene y elimina los contenedores, conservando imagenes y volumenes
+#	Detiene y elimina los contenedores, conservando imagenes y volumenes
 clean:
 	@$(COMPOSE) down
 	@echo "[CLEAN] Containers and network removed successfully (IMAGES AND PERSISTENT DATA NOT AFECTED)"
@@ -126,12 +125,17 @@ re: fclean all status
 
 help:
 	@echo "\n🚀 Inception Project Makefile Help"
-	@echo "make all          Build and start all services (alias for make build)"
-	@echo "make certs        Generate SSL certificates only"
+	@echo "make all          Build and start the whole system from zero for the first time"
+	@echo "make certs        Generate SSL certificates"
+	@echo "make setup	 Set up persistent volumes and check domain usability"
+	@echo "make build	 ReBuild images if some Dockerfile or dependency has changed and up containers"
+	@echo "make up		 Up containers from existing images"
 	@echo "make status       Show all containers' info"
 	@echo "make clean        Stop & Remove containers and network ('docker-compose down')"
 	@echo "make fclean       Full cleanup (containers, network, images, ALL volumes, ssl certs, ALL images cache)"
-	@echo "make re           Cleanup everything and Rebuild"
+	@echo "make re           Cleanup everything and Rebuild from zero"
+	@echo "make logs         Show all containers logs"
+	@echo "make test         Test every container functioning"
 
 
 .PHONY: all setup build down up clean fclean re status help debug logs test
@@ -139,7 +143,7 @@ help:
 
 # ============= Debug ============ #
 
-	# Da informacion general del estado del proyecto
+#	Da informacion general del estado del proyecto
 status:
 	@echo "\n📊 [STATUS] Checking services state"
 	@echo "----------- Images -------------"
@@ -166,10 +170,9 @@ status:
 	@docker system df
 
 
-
-	# Lanzo un build (sin -d detached) para tener los contenedores en primer plano y ver los logs en consola
-debug:
-	@$(COMPOSE) up --build
+#	 Lanzo un build (sin -d detached) para tener los contenedores en primer plano y ver los logs en consola
+#debug:
+#	@$(COMPOSE) up --build
 
 
 logs:
