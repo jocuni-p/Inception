@@ -58,14 +58,13 @@ $(SSL_KEY) $(SSL_CRT): | $(SSL_DIR)
 
 # ============= MAIN RULES ============ #
 
-
+	# Primera vez que arranco el proyecto
 all: certs setup build status
 
-# Genera el certificado
-# # Asegura que los archivos 'key' y 'cert' existan y estén listos.
+	# Genera el certificado
 certs: $(SSL_KEY) $(SSL_CRT)
 
-# Crea e inicializa los volumenes locales persistentes y comprueba si el dominio esta en /etc/hosts
+	# Crea e inicializa los volumenes locales persistentes y comprueba si el dominio esta en /etc/hosts
 setup: 
 	@echo "[SETUP] Creating local volume directories in $(MYDATA_DIR)"
 	@mkdir -p $(DB_DIR) $(WP_DIR)
@@ -81,19 +80,66 @@ setup:
 		echo "[SETUP] $(DOMAIN) already in /etc/hosts"; \
 	fi
 
-# Construye y levanta los containers en segundo plano (detached)
+	# Construye y levanta los containers en segundo plano (detached)
+	# up: Levanta los servicios definidos en el docker-compose.yml.
+	# --build: Reconstruye las imágenes Docker antes de iniciar los 
+	#  contenedores si hubo cambios en los Dockerfiles o dependencias.
 build:
 	@echo "[BUILD] Building containers with TLS 1.3"
 	@$(COMPOSE) up -d --build
 	@echo "\n✅ [SUCCESS] Inception project is running!"
 	@echo "============================================"
 	@echo "• Access: https://$(DOMAIN)"
-	@echo "• Check containers: make status"
-	@echo "• Stop & Remove services: make clean"
 	@echo "• Help: make help"
 	@echo "============================================"
 
-# Da informacion general del estado del proyecto
+
+	# Crea y levanta containers sin reconstruir las imagenes (util despues de un clean)
+up:
+	@$(COMPOSE) up -d
+
+
+	# Detiene y elimina los contenedores, conservando imagenes y volumenes
+clean:
+	@$(COMPOSE) down
+	@echo "[CLEAN] Containers and network removed successfully (IMAGES AND PERSISTENT DATA NOT AFECTED)"
+
+fclean: clean
+#	Aseguro que los contenedores están detenidos, liberan los volúmenes y los elimino.
+	@if [ -d "$(MYDATA_DIR)" ]; then \
+		echo "[FCLEAN] 🧹 Removing full persistent data directory $(MYDATA_DIR) with sudo..."; \
+		sudo rm -rf $(MYDATA_DIR); \
+	else \
+		echo "[FCLEAN] No persistent data directory found at $(MYDATA_DIR)."; \
+	fi
+	@-docker volume rm inception_db_vol inception_wp_vol 2>/dev/null || true
+#	'-' al inicio: ignora errores en los comandos criticos
+	@echo "[FCLEAN] Removed intern volumes succesfully."
+	@echo "[FCLEAN] Removing ALL project resources"
+	@$(COMPOSE) down --rmi all --volumes --remove-orphans
+	@echo "[FCLEAN] Removing SSL certificates"
+	@-rm -rf $(SSL_DIR) 2>/dev/null || true
+	@docker builder prune
+	@echo "[FCLEAN]🧹🧹🧹 Removed ALL build CACHE."
+
+re: fclean all status
+
+help:
+	@echo "\n🚀 Inception Project Makefile Help"
+	@echo "make all          Build and start all services (alias for make build)"
+	@echo "make certs        Generate SSL certificates only"
+	@echo "make status       Show all containers' info"
+	@echo "make clean        Stop & Remove containers and network ('docker-compose down')"
+	@echo "make fclean       Full cleanup (containers, network, images, ALL volumes, ssl certs, ALL images cache)"
+	@echo "make re           Cleanup everything and Rebuild"
+
+
+.PHONY: all setup build down up clean fclean re status help debug logs test
+
+
+# ============= Debug ============ #
+
+	# Da informacion general del estado del proyecto
 status:
 	@echo "\n📊 [STATUS] Checking services state"
 	@echo "----------- Images -------------"
@@ -119,46 +165,23 @@ status:
 	@echo "\n---------- Disk Usage ----------"
 	@docker system df
 
-# Lanzo un build (sin -d detached) para tener los contenedores en primer plano y ver los logs en consola
+
+
+	# Lanzo un build (sin -d detached) para tener los contenedores en primer plano y ver los logs en consola
 debug:
 	@$(COMPOSE) up --build
 
-clean:
-	@$(COMPOSE) down
-	@echo "[CLEAN] Containers and network removed successfully (PERSISTENT DATA NOT AFECTED)"
 
-fclean: clean
-#	Aseguro que los contenedores están detenidos, liberan los volúmenes y los elimino.
-	@if [ -d "$(MYDATA_DIR)" ]; then \
-		echo "[FCLEAN] 🧹 Removing full persistent data directory $(MYDATA_DIR) with sudo..."; \
-		sudo rm -rf $(MYDATA_DIR); \
-	else \
-		echo "[FCLEAN] No persistent data directory found at $(MYDATA_DIR)."; \
-	fi
-	@-docker volume rm inception_db_vol inception_wp_vol 2>/dev/null || true
-#	'-' al inicio: ignora errores en los comandos criticos
-	@echo "[FCLEAN] Removed intern volumes succesfully."
-	@echo "[FCLEAN] Removing ALL project resources"
-	@$(COMPOSE) down --rmi all --volumes --remove-orphans
-	@echo "[FCLEAN] Removing SSL certificates"
-	@-rm -rf $(SSL_DIR) 2>/dev/null || true
-	@docker builder prune
-	@echo "[FCLEAN]🧹🧹🧹 Removed ALL build CACHE."
+logs:
+	@$(COMPOSE) logs
 
-re: fclean all status
 
-# ============= Help ============ #
-
-help:
-	@echo "\n🚀 Inception Project Makefile Help"
-	@echo "make all          Build and start all services (alias for make build)"
-	@echo "make certs        Generate SSL certificates only"
-	@echo "make status       Show all containers' info"
-	@echo "make clean        Stop & Remove containers and network ('docker-compose down')"
-	@echo "make fclean       Full cleanup (containers, network, images, ALL volumes, ssl certs, ALL images cache)"
-	@echo "make re           Cleanup everything and Rebuild"
 
 # ============ Testing ========== #
+
+test:	verify-db verify-wp verify-nginx
+
+
 verify-db:
 	@echo "\n🔍 Verifying MariaDB secrets and database setup..."
 	@container=$$(docker ps --filter "name=inception-mariadb" --format "{{.Names}}"); \
@@ -190,6 +213,7 @@ verify-db:
 
 
 verify-wp:
+	@echo "==========================================="
 	@echo "\n🔍 Verifying WordPress container setup..."
 	@container=$$(docker ps --filter "name=inception-wordpress" --format "{{.Names}}"); \
 	if [ -z "$$container" ]; then \
@@ -199,7 +223,7 @@ verify-wp:
 	echo "✅ Found container: $$container"; \
 	echo "📁 Checking mounted secrets..."; \
 	docker exec -i $$container bash -c ' \
-		for file in wp_user wp_password; do \
+		for file in wp_user wp_user_password; do \
 			if [ ! -f /run/secrets/$$file ]; then \
 				echo "❌ Missing /run/secrets/$$file"; \
 				exit 1; \
@@ -217,6 +241,7 @@ verify-wp:
 
 
 verify-nginx:
+	@echo "==========================================="
 	@echo "\n🔍 Verifying Nginx container and WordPress site availability..."
 	@container=$$(docker ps --filter "name=inception-nginx" --format "{{.Names}}"); \
 	if [ -z "$$container" ]; then \
@@ -230,4 +255,3 @@ verify-nginx:
 		echo "\n❌ Failed to access WordPress site through Nginx"
 
 
-.PHONY: all setup build down status clean fclean re help verify-db verify-wp verify-nginx
