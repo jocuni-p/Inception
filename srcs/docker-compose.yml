@@ -1,13 +1,8 @@
 services:
   mariadb:
     build: ./requirements/mariadb
-    env_file: .env # defino cual sera el archivo externo de las variables de entorno que se inyectaran al container
+    env_file: .env # defino el archivo externo de las variables de entorno que se inyectaran al container
     restart: always
-    # healthcheck: # chequea si mariadb esta listo para aceptar conexiones (exit 0, sino exit 1)
-    #   test: ["CMD-SHELL", "mysqladmin ping -h localhost -u $$MYSQL_USER --password=$$MYSQL_PASSWORD || exit 1"]
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 5
     expose: 
       - "3306"
     volumes:

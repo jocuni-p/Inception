@@ -17,13 +17,13 @@ export MYSQL_ROOT_PASSWORD=$(cat /run/secrets/db_root_password)
 echo "[Entrypoint] Preparing init script with envsubst..."
 envsubst < /docker-entrypoint-initdb.d/init-db.template > /docker-entrypoint-initdb.d/init-db.sql
 
-# Si no existe previamente, seteo e inicializo MariaDB. Si no existe, no reinicializo nada.
+# Si no existe previamente, seteo e inicializo MariaDB. Si existe, no reinicializo nada.
 #if [ ! -d "/var/lib/mysql/mysql" ]; then
-    echo "[Entrypoint] First time setup - initializing DB"
+    echo "[Entrypoint] initializing MariaDB"
     chown -R mysql:mysql /var/lib/mysql
     mysqld --init-file=/docker-entrypoint-initdb.d/init-db.sql
 #else
- #   echo "[Entrypoint] Existing database found, skipping init"
+#    echo "[Entrypoint] Existing database found, skipping init"
 #fi
 
 echo "[Entrypoint] Starting MariaDB normally"

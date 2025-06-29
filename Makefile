@@ -81,8 +81,8 @@ setup:
 
 #	Construye y levanta los containers en segundo plano (detached)
 #	up: Levanta los servicios definidos en el docker-compose.yml.
-#	--build: Reconstruye las imágenes Docker antes de iniciar los 
-#	 contenedores si hubo cambios en los Dockerfiles o dependencias.
+#	--build: Reconstruye las imágenes Docker (antes de iniciar los 
+#	 contenedores) si hubo cambios en los Dockerfiles o dependencias.
 build:
 	@echo "[BUILD] Building containers with TLS 1.3"
 	@$(COMPOSE) up -d --build
@@ -245,16 +245,26 @@ verify-wp:
 
 verify-nginx:
 	@echo "==========================================="
-	@echo "\n🔍 Verifying Nginx container and WordPress site availability..."
+	@echo "\n🔍 Verifying Nginx (HTTPS) and WordPress availability..."
+
 	@container=$$(docker ps --filter "name=inception-nginx" --format "{{.Names}}"); \
 	if [ -z "$$container" ]; then \
 		echo "❌ Nginx container is not running."; \
 		exit 1; \
 	fi; \
 	echo "✅ Found container: $$container"; \
-	echo "🌍 Attempting to curl WordPress home page via Nginx..."; \
-	curl -s -o /dev/null -w "%{http_code}" http://localhost | grep -qE "200|302" && \
-		echo "\n✅ WordPress site is accessible via Nginx" || \
-		echo "\n❌ Failed to access WordPress site through Nginx"
+	echo "⏳ Waiting for WordPress to be available over HTTPS..."
 
+	@for i in $$(seq 1 15); do \
+		status=$$(curl -ks -o /dev/null -w "%{http_code}" https://localhost/wp-login.php); \
+		if echo "$$status" | grep -qE "200|302"; then \
+			echo "✅ WordPress is accessible over HTTPS via Nginx (HTTP $$status)\n"; \
+			exit 0; \
+		else \
+			echo "Attempt $$i: Not ready (HTTP $$status), retrying..."; \
+			sleep 2; \
+		fi; \
+	done; \
+	echo "\n❌ WordPress not accessible over HTTPS after multiple attempts.\n"; \
+	exit 1
 
