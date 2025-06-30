@@ -1,6 +1,5 @@
 
 
-
 DOMINIO: El navegador, antes de buscar la IP de '$(USER).42.fr' en las DNS de 
  la red, primero mirara si esta en el archivo '/etc/hosts' del host. Por tanto,
  asocio la IP del localhost (127.0.0.1) a ese dominio dentro de hosts. De este
@@ -27,15 +26,14 @@ Se anyadiran al proyecto manualmente, una vez el evaluador lo haya descargado.
 En un contexto profesional esto deberia manejarse inicializando Docker Swarm que 
 crea mas seguridad y lo manjea de forma encryptada.
 
-En cada container monto algunos secrets desde el host a dentro del contenedor 
+En cada container monto los secrets necesarios desde el host a dentro del contenedor 
 y luego los exporto como variables de entorno de ese container. Cada container tiene
  su copia en memoria del .env externo y no ve los .env de los otros containers.
 
 
 
 NGINX:
-✅ Expone tu sitio WordPress al exterior a través del puerto HTTPS (443).
-
-✅ Redirige las peticiones PHP al contenedor wordpress, que es el que ejecuta el código PHP.
+- Expone mi sitio WordPress al exterior a través del puerto HTTPS (443).
+- Redirige las peticiones PHP al contenedor wordpress, que es el que ejecuta el código PHP.
 
 
