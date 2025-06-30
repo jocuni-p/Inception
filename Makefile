@@ -98,13 +98,13 @@ up:
 	@$(COMPOSE) up -d
 
 
-#	Detiene y elimina los contenedores, conservando imagenes y volumenes
+#	Detiene y elimina los contenedores, conservando las imagenes
 clean:
 	@$(COMPOSE) down
-	@echo "[CLEAN] Containers and network removed successfully (IMAGES AND PERSISTENT DATA NOT AFECTED)"
+	@-docker volume rm inception_db_vol inception_wp_vol 2>/dev/null || true
+	@echo "[CLEAN] Containers, volumes and network removed successfully (IMAGES AND PERSISTENT DATA NOT AFECTED)"
 
 fclean: clean
-#	Aseguro que los contenedores están detenidos, liberan los volúmenes y los elimino.
 	@if [ -d "$(MYDATA_DIR)" ]; then \
 		echo "[FCLEAN] 🧹 Removing full persistent data directory $(MYDATA_DIR) with sudo..."; \
 		sudo rm -rf $(MYDATA_DIR); \
@@ -113,8 +113,7 @@ fclean: clean
 	fi
 	@-docker volume rm inception_db_vol inception_wp_vol 2>/dev/null || true
 #	'-' al inicio: ignora errores en los comandos criticos
-	@echo "[FCLEAN] Removed intern volumes succesfully."
-	@echo "[FCLEAN] Removing ALL project resources"
+	@echo "[FCLEAN] Removing images, volumes and orphan resources"
 	@$(COMPOSE) down --rmi all --volumes --remove-orphans
 	@echo "[FCLEAN] Removing SSL certificates"
 	@-rm -rf $(SSL_DIR) 2>/dev/null || true
@@ -131,14 +130,14 @@ help:
 	@echo "make build	 ReBuild images if some Dockerfile or dependency has changed and up containers"
 	@echo "make up		 Up containers from existing images"
 	@echo "make status       Show all containers' info"
-	@echo "make clean        Stop & Remove containers and network ('docker-compose down')"
+	@echo "make clean        Stop & Remove containers, network and intern volumes"
 	@echo "make fclean       Full cleanup (containers, network, images, ALL volumes, ssl certs, ALL images cache)"
 	@echo "make re           Cleanup everything and Rebuild from zero"
 	@echo "make logs         Show all containers logs"
 	@echo "make test         Test every container functioning"
 
 
-.PHONY: all setup build down up clean fclean re status help debug logs test
+.PHONY: all certs setup build up clean fclean re status help logs test
 
 
 # ============= Debug ============ #
@@ -168,11 +167,6 @@ status:
 	fi
 	@echo "\n---------- Disk Usage ----------"
 	@docker system df
-
-
-#	 Lanzo un build (sin -d detached) para tener los contenedores en primer plano y ver los logs en consola
-#debug:
-#	@$(COMPOSE) up --build
 
 
 logs:
