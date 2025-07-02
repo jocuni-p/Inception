@@ -13,4 +13,5 @@
 # sistema operativo, sin usar la red.
 # port: Puerto en el que escucha conexiones TCP.
 # datadir: Carpeta donde se almacenan los datos de las bases de datos.
-# bind_address: Habilita accesos remotos dentro de la red del contenedor.
+# bind_address: Habilita accesos remotos dentro de la red del contenedor,
+# permitiendo conexiones de cualquier red (incluido localhost).
