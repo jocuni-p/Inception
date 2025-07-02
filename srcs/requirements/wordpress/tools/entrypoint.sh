@@ -20,7 +20,12 @@ do
   fi
 done
 
-# Cargar y exportar secretos desde archivos montados
+# Valido que existan las variables de entorno
+: "${DOMAIN_NAME:?Missing DOMAIN_NAME in .env}"
+: "${MYSQL_DATABASE:?Missing MYSQL_DATABASE in .env}"
+: "${WP_TITLE:?Missing WP_TITLE in .env}"
+
+# Carga y exporta secretos desde archivos montados
 export MYSQL_USER=$(cat /run/secrets/db_user)
 export MYSQL_PASSWORD=$(cat /run/secrets/db_password)
 
@@ -32,28 +37,18 @@ export WP_USER=$(cat /run/secrets/wp_user)
 export WP_USER_PASSWORD=$(cat /run/secrets/wp_user_password)
 export WP_USER_EMAIL=$(cat /run/secrets/wp_user_email)
 
-# Recargo las variables del .env por si este script no las viese 
-# export DOMAIN_NAME=${DOMAIN_NAME}
-# export MYSQL_DATABASE=${MYSQL_DATABASE}
-
-# Validación de variables de entorno críticas
-: "${DOMAIN_NAME:?Missing DOMAIN_NAME in .env}"
-: "${MYSQL_DATABASE:?Missing MYSQL_DATABASE in .env}"
-: "${WP_TITLE:?Missing WP_TITLE in .env}"
 
 # Directorio donde se instalará WordPress
 WP_PATH="/var/www/html"
 
-# Esperar a que mariadb esta lista
+# Esperar a que mariadb esta lista desde dentro y wordpress no falle al iniciar
 echo "[Entrypoint] Waiting for MariaDB to be ready..."
-# until mysqladmin ping -h mariadb --silent; do
-# until mysqladmin ping -h mariadb -u${MYSQL_USER} -p${MYSQL_PASSWORD} --silent; do
 until mysqladmin ping -h mariadb -u"${MYSQL_USER}" -p"${MYSQL_PASSWORD}" --silent; do
     sleep 2
 done
 echo "[Entrypoint] MariaDB is ready."
 
-# Si no existe WordPress (descarga, crea file config, instala, configura, crea user, otras configuraciones)
+# Si no existe WordPress (lo descarga, crea el config file, instala, configura, crea user, otras configuraciones)
 if [ ! -f "$WP_PATH/wp-config.php" ]; then
     echo "[Entrypoint] Downloading WordPress..."
     wp core download --path="$WP_PATH" --allow-root
