@@ -59,6 +59,16 @@ services:
     depends_on:
       - wordpress # Hasta que wordpress no este listo no se arrancara nginx
 
+  static-website:
+    build: ./requirements/static-website
+    env_file: .env # PENSAR SI LO NECESITO ????
+    restart: always
+    ports:
+      - "80:80" # Host:Container ???????? 8080:80 ?????
+    volumes: # no estic segur si ho he de fer persistent. Crec que NO fa falta.
+    networks:
+      - inception # Crec que no fa falta perque no comunicara amb els altres containers
+
 volumes: # Montare carpetas reales del host usando 'bind' dentro del container
   db_vol:
     driver: local
