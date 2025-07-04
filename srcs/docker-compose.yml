@@ -53,7 +53,6 @@ services:
       - "443:443" # El puerto del contenedor se mapea al del host (HOST_PORT:CONTAINER_PORT)
     volumes:
       - wp_vol:/var/www/html # Comparte volumen con wordpress con el contenido de este ultimo
-#      - ./requirements/nginx/conf/default.conf:/etc/nginx/conf.d/default.conf
     networks:
       - inception
     depends_on:
@@ -61,13 +60,13 @@ services:
 
   static-website:
     build: ./requirements/static-website
-    env_file: .env # PENSAR SI LO NECESITO ????
     restart: always
-    ports:
-      - "80:80" # Host:Container ???????? 8080:80 ?????
-    volumes: # no estic segur si ho he de fer persistent. Crec que NO fa falta.
+    expose:
+      - "80"
+#    ports:
+#      - "80:80" # Host:Container
     networks:
-      - inception # Crec que no fa falta perque no comunicara amb els altres containers
+      - inception
 
 volumes: # Montare carpetas reales del host usando 'bind' dentro del container
   db_vol:
