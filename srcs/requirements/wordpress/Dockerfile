@@ -1,11 +1,16 @@
 FROM debian:bullseye
 
 # Update and upgrade apt and install required packages
+# WordPress es simplemente un conjunto de archivos .php y
+# para que funcione, necesito que el servidor web pueda interpretar PHP.
+# Como Nginx no puede interpretar PHP por si mismo, necesito que otro proceso
+# (como php-fpm) lo haga, por eso lo instalo tambien.
 RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y vim curl wget php7.4 php7.4-fpm php7.4-mysql mariadb-client && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install WP-CLI globally
+# Necesito wp-cli para manejar toda la instalacion
 RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -O /usr/local/bin/wp && \
     chmod +x /usr/local/bin/wp
 
