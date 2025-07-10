@@ -240,7 +240,6 @@ verify-wp:
 verify-nginx:
 	@echo "==========================================="
 	@echo "\n🔍 Verifying Nginx (HTTPS) and WordPress availability..."
-
 	@container=$$(docker ps --filter "name=inception-nginx" --format "{{.Names}}"); \
 	if [ -z "$$container" ]; then \
 		echo "❌ Nginx container is not running."; \

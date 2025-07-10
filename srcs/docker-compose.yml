@@ -1,7 +1,7 @@
 services:
   mariadb:
     build: ./requirements/mariadb
-    env_file: .env # defino el archivo externo de las variables de entorno que se inyectaran al container
+    env_file: .env # defino archivo de las variables de entorno que se inyectaran al container
     restart: always
     expose: 
       - "3306"
@@ -12,6 +12,8 @@ services:
       - ../secrets/db_root_password.txt:/run/secrets/db_root_password:ro
     networks:
       - inception
+
+#--------------------
 
   wordpress:
     build: ./requirements/wordpress
@@ -39,6 +41,7 @@ services:
     depends_on: # solo controla el orden de inicio, no si su servicio interno ya esta 100% operativo.
       mariadb:
         condition: service_healthy # espera a que el healthcheck de mariadb pase el 'exit 0' 
+#--------------------------
 
   nginx:
     build: ./requirements/nginx
@@ -58,6 +61,21 @@ services:
     depends_on:
       - wordpress # Hasta que wordpress no este listo no se arrancara nginx
 
+#----------------------------
+
+  adminer-web:
+    build: ./requirements/adminer
+#	env_file: .env # NO LO NECESITO SI NO HE DE PASARLE NINGUN PARAMETRO
+    restart: always
+    expose:
+      - "80" # Se accede a Adminer a traves del proxy reverso de Nginx, no desde el host.
+    networks:
+      - inception # Así adminer y mariadb pueden comunicarse internamente.
+    depends_on:
+      - mariadb # Solo controla orden de arranque, NO espera a que mariadb este operativo.
+
+#----------------------------
+
   static-website:
     build: ./requirements/static-website
     restart: always
@@ -66,7 +84,9 @@ services:
 #    ports:
 #      - "80:80" # Host:Container
     networks:
-      - inception
+      - inception 
+
+#----------------------------
 
 volumes: # Montare carpetas reales del host usando 'bind' dentro del container
   db_vol:
