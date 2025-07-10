@@ -16,10 +16,10 @@ docker-compose.override.yml
 *.tar
 
 # === Environment and secrets ===
-.env
-.env.*
-*secrets/
-**/secrets*
+# .env
+# .env.*
+# *secrets/
+# **/secrets*
 credentials.*
 *.pem
 *.key

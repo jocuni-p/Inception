@@ -247,7 +247,6 @@ verify-nginx:
 	fi; \
 	echo "✅ Found container: $$container"; \
 	echo "⏳ Waiting for WordPress to be available over HTTPS..."
-
 	@for i in $$(seq 1 15); do \
 		status=$$(curl -ks -o /dev/null -w "%{http_code}" https://localhost/wp-login.php); \
 		if echo "$$status" | grep -qE "200|302"; then \
