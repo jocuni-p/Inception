@@ -1,9 +1,10 @@
 ##  🐳 Project: Inception
+
 ---
 
-````markdown
 
 ## 📋 Descripción
+
 
 **Inception** es un proyecto de 42Barcelona cuyo objetivo es desplegar una infraestructura
 completa utilizando **Docker** y **Docker Compose**, dentro de una máquina virtual.
@@ -11,6 +12,7 @@ completa utilizando **Docker** y **Docker Compose**, dentro de una máquina virt
  MariaDB, etc.) se contienen y comunican entre sí de forma segura, mantenible y escalable.
 
 ---
+
 
 ## 🧱 Arquitectura del Proyecto
 
@@ -40,6 +42,7 @@ Este proyecto contiene los siguientes servicios desplegados en contenedores Dock
 
 ---
 
+
 ## 🔐 Seguridad y Buenas Prácticas
 
 - Solo se expone el puerto **443** en NGINX (HTTPS).
@@ -53,6 +56,7 @@ didácticos, en un entorno real **nunca deben almacenarse ni versionarse públic
 
 ---
 
+
 ## ✅ Bonus implementados
 
 - **Adminer**
@@ -64,6 +68,7 @@ didácticos, en un entorno real **nunca deben almacenarse ni versionarse públic
   - Ideal para mostrar un CV o portfolio simple en HTML/CSS/JS.
 
 ---
+
 
 ## 🚀 Instalación y Uso
 
@@ -77,6 +82,7 @@ Este comando construirá todas las imágenes necesarias y levantará los contene
 en `docker-compose.yml`.
 
 ---
+
 
 ## 🌍 Acceso al Proyecto
 
@@ -95,6 +101,7 @@ Una vez levantados los servicios, puedes acceder a:
 > tu `/etc/hosts` apuntando a tu IP local.
 
 ---
+
 
 ## 📁 Estructura del Proyecto
 
@@ -149,6 +156,7 @@ Una vez levantados los servicios, puedes acceder a:
 
 ---
 
+
 ## 📎 Notas Técnicas
 
 * Sistema operativo base: Debian 12 (bookworm).
@@ -157,6 +165,7 @@ Una vez levantados los servicios, puedes acceder a:
 * normas del proyecto.
 
 ---
+
 
 ## 👤 Autor
 
