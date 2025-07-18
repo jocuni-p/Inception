@@ -1,9 +1,9 @@
-##  🐳 Project: Inception
+#  🐳 Project: Inception
 
 ---
 
 
-## 📋 Descripción
+## Descripción
 
 
 **Inception** es un proyecto de 42Barcelona cuyo objetivo es desplegar una infraestructura
@@ -14,7 +14,7 @@ completa utilizando **Docker** y **Docker Compose**, dentro de una máquina virt
 ---
 
 
-## 🧱 Arquitectura del Proyecto
+## Arquitectura del Proyecto
 
 Este proyecto contiene los siguientes servicios desplegados en contenedores Docker independientes:
 
@@ -43,7 +43,7 @@ Este proyecto contiene los siguientes servicios desplegados en contenedores Dock
 ---
 
 
-## 🔐 Seguridad y Buenas Prácticas
+## Seguridad y Buenas Prácticas
 
 - Solo se expone el puerto **443** en NGINX (HTTPS).
 - Las versiones de TLS anteriores a 1.2 están deshabilitadas.
@@ -57,7 +57,7 @@ didácticos, en un entorno real **nunca deben almacenarse ni versionarse públic
 ---
 
 
-## ✅ Bonus implementados
+## Bonus implementados
 
 - **Adminer**
   - Interfaz web ligera para gestionar la base de datos MariaDB.
