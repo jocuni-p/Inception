@@ -92,9 +92,12 @@ make status
 
 Este comando es útil para verificar que todo está funcionando correctamente, especialmente durante el desarrollo o antes de las pruebas.
 
-!(/imagen.png)
----
+<img src="images/Screenshot%20from%202025-07-18%2013-52-35.png" 
+     alt="Captura" 
+     style="width: 600px; display: block; margin: 0 auto;" />
 
+
+---
 
 ## 🌍 Acceso al Proyecto
 
