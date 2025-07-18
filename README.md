@@ -5,7 +5,10 @@
 
 ## 📋 Descripción
 
-**Inception** es un proyecto de 42Barcelona cuyo objetivo es desplegar una infraestructura completa utilizando **Docker** y **Docker Compose**, dentro de una máquina virtual. La arquitectura final replica un entorno real donde distintos servicios (NGINX, WordPress, MariaDB, etc.) se contienen y comunican entre sí de forma segura, mantenible y escalable.
+**Inception** es un proyecto de 42Barcelona cuyo objetivo es desplegar una infraestructura
+completa utilizando **Docker** y **Docker Compose**, dentro de una máquina virtual.
+ La arquitectura final replica un entorno real donde distintos servicios (NGINX, WordPress,
+ MariaDB, etc.) se contienen y comunican entre sí de forma segura, mantenible y escalable.
 
 ---
 
@@ -41,9 +44,12 @@ Este proyecto contiene los siguientes servicios desplegados en contenedores Dock
 
 - Solo se expone el puerto **443** en NGINX (HTTPS).
 - Las versiones de TLS anteriores a 1.2 están deshabilitadas.
-- El nombre del usuario administrador de WordPress evita las palabras prohibidas como `admin`, `administrator`, etc.
-- Las credenciales se gestionan mediante variables de entorno y archivos secretos (`.env`, `secrets/`).
-- **Importante**: Aunque `.env` y `secrets/` se incluyen en este repositorio con fines didácticos, en un entorno real **nunca deben almacenarse ni versionarse públicamente**.
+- El nombre del usuario administrador de WordPress evita las palabras prohibidas como
+`admin`, `administrator`, etc.
+- Las credenciales se gestionan mediante variables de entorno y archivos secretos (`.env`,
+`secrets/`).
+- **Importante**: Aunque `.env` y `secrets/` se incluyen en este repositorio con fines
+didácticos, en un entorno real **nunca deben almacenarse ni versionarse públicamente**.
 
 ---
 
@@ -67,7 +73,8 @@ Para construir y lanzar la infraestructura, simplemente ejecuta:
 make all
 ````
 
-Este comando construirá todas las imágenes necesarias y levantará los contenedores definidos en `docker-compose.yml`.
+Este comando construirá todas las imágenes necesarias y levantará los contenedores definidos 
+en `docker-compose.yml`.
 
 ---
 
@@ -84,7 +91,8 @@ Una vez levantados los servicios, puedes acceder a:
 * Adminer (gestor de base de datos):
   `https://adminer.42.fr/adminer`
 
-> Sustituye `<login>` por tu usuario real de 42. El dominio debe estar configurado en tu `/etc/hosts` apuntando a tu IP local.
+> Sustituye `<login>` por tu usuario real de 42. El dominio debe estar configurado en
+> tu `/etc/hosts` apuntando a tu IP local.
 
 ---
 
@@ -145,7 +153,8 @@ Una vez levantados los servicios, puedes acceder a:
 
 * Sistema operativo base: Debian 12 (bookworm).
 * Todas las imágenes Docker están construidas manualmente desde Debian 11 (bullseye).
-* No se han utilizado imágenes preconstruidas desde Docker Hub, en cumplimiento con las normas del proyecto.
+* No se han utilizado imágenes preconstruidas desde Docker Hub, en cumplimiento con las
+* normas del proyecto.
 
 ---
 
