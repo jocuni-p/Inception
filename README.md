@@ -92,7 +92,7 @@ make status
 
 Este comando es útil para verificar que todo está funcionando correctamente, especialmente durante el desarrollo o antes de las pruebas.
 
-
+!(/imagen.png)
 ---
 
 
