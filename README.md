@@ -81,6 +81,35 @@ make all
 Este comando construirá todas las imágenes necesarias y levantará los contenedores definidos 
 en `docker-compose.yml`.
 
+Por supuesto, aquí tienes el apartado **"Instalación y Uso"** en español, incluyendo la descripción de la regla `make status`:
+
+---
+
+````markdown
+## 🚀 Instalación y Uso
+
+Para construir y lanzar toda la infraestructura, simplemente ejecuta:
+
+```bash
+make all
+````
+
+Este comando realizará lo siguiente:
+
+* Construirá todas las imágenes Docker necesarias usando los Dockerfiles proporcionados.
+* Levantará todos los contenedores definidos en `docker-compose.yml`.
+* Configurará la red y montará los volúmenes correspondientes.
+
+Para comprobar el estado actual de la infraestructura, incluyendo las **imágenes creadas, contenedores en ejecución y volúmenes montados**, puedes usar:
+
+```bash
+make status
+```
+
+Este comando es útil para verificar que todo está funcionando correctamente, especialmente durante el desarrollo o antes de las pruebas.
+
+```
+
 ---
 
 
@@ -157,7 +186,7 @@ Una vez levantados los servicios, puedes acceder a:
 ---
 
 
-## 📎 Notas Técnicas
+## Notas Técnicas
 
 * Sistema operativo base: Debian 12 (bookworm).
 * Todas las imágenes Docker están construidas manualmente desde Debian 11 (bullseye).
@@ -167,12 +196,8 @@ Una vez levantados los servicios, puedes acceder a:
 ---
 
 
-## 👤 Autor
+## Autor
 
 Proyecto realizado por **jocuni-p**
 Escuela 42Barcelona
 Julio 2025
-
----
-
-```
