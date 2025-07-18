@@ -78,22 +78,6 @@ Para construir y lanzar la infraestructura, simplemente ejecuta:
 make all
 ````
 
-Este comando construirá todas las imágenes necesarias y levantará los contenedores definidos 
-en `docker-compose.yml`.
-
-Por supuesto, aquí tienes el apartado **"Instalación y Uso"** en español, incluyendo la descripción de la regla `make status`:
-
----
-
-````markdown
-## 🚀 Instalación y Uso
-
-Para construir y lanzar toda la infraestructura, simplemente ejecuta:
-
-```bash
-make all
-````
-
 Este comando realizará lo siguiente:
 
 * Construirá todas las imágenes Docker necesarias usando los Dockerfiles proporcionados.
@@ -107,8 +91,6 @@ make status
 ```
 
 Este comando es útil para verificar que todo está funcionando correctamente, especialmente durante el desarrollo o antes de las pruebas.
-
-```
 
 ---
 
