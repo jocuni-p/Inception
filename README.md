@@ -80,17 +80,18 @@ make all
 
 Este comando realizará lo siguiente:
 
+* Creara un certificado autofirmado para dar soporte de seguridad a las webs.
+* Creara dos directorios en el host para los volumenes persistentes.
 * Construirá todas las imágenes Docker necesarias usando los Dockerfiles proporcionados.
 * Levantará todos los contenedores definidos en `docker-compose.yml`.
 * Configurará la red y montará los volúmenes correspondientes.
 
-Para comprobar el estado actual de la infraestructura, incluyendo las **imágenes creadas, contenedores en ejecución y volúmenes montados**, puedes usar:
+Para verificar que todo esta funcionando correctamente y ver el estado actual de la infraestructura, incluyendo las **imágenes creadas, contenedores en ejecución y volúmenes montados**, puedes usar:
 
 ```bash
 make status
 ```
 
-Este comando es útil para verificar que todo está funcionando correctamente, especialmente durante el desarrollo o antes de las pruebas.
 
 <img src="images/Screenshot%20from%202025-07-18%2013-52-35.png" 
      alt="Captura" 
@@ -101,7 +102,7 @@ Este comando es útil para verificar que todo está funcionando correctamente, e
 
 ## 🌍 Acceso al Proyecto
 
-Una vez levantados los servicios, puedes acceder a:
+Una vez levantados los servicios, podras acceder a:
 
 * Sitio principal de WordPress:
   `https://<login>.42.fr`
@@ -112,8 +113,8 @@ Una vez levantados los servicios, puedes acceder a:
 * Adminer (gestor de base de datos):
   `https://adminer.42.fr/adminer`
 
-> Sustituye `<login>` por tu usuario real de 42. El dominio debe estar configurado en
-> tu `/etc/hosts` apuntando a tu IP local.
+Sustituye `<login>` por tu usuario real (de 42). El dominio debe estar configurado previamente en
+tu `/etc/hosts` apuntando a tu IP local.
 
 ---
 
@@ -176,14 +177,12 @@ Una vez levantados los servicios, puedes acceder a:
 
 * Sistema operativo base: Debian 12 (bookworm).
 * Todas las imágenes Docker están construidas manualmente desde Debian 11 (bullseye).
-* No se han utilizado imágenes preconstruidas desde Docker Hub, en cumplimiento con las
-* normas del proyecto.
+* No se han utilizado imágenes preconstruidas desde Docker Hub.
 
 ---
 
 
 ## Autor
 
-Proyecto realizado por **jocuni-p**
-Escuela 42Barcelona
+Proyecto realizado por **jocuni-p** en 42Barcelona
 Julio 2025
