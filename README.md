@@ -1,4 +1,4 @@
-#  🐳 Project: Inception
+#  Project: Inception
 
 ---
 
@@ -70,7 +70,7 @@ didácticos, en un entorno real **nunca deben almacenarse ni versionarse públic
 ---
 
 
-## 🚀 Instalación y Uso
+## Instalación y Uso
 
 Para construir y lanzar la infraestructura, simplemente ejecuta:
 
@@ -100,7 +100,7 @@ make status
 
 ---
 
-## 🌍 Acceso al Proyecto
+## Acceso al Proyecto
 
 Una vez levantados los servicios, podras acceder a:
 
@@ -119,7 +119,7 @@ tu `/etc/hosts` apuntando a tu IP local.
 ---
 
 
-## 📁 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 .
